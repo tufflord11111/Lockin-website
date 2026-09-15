@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Lock-In</title>
+    <meta name="description" content="What Lock-In stores about you, why, for how long, and how to delete it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #F2EDE3;
+            --navy: #0D1B2A;
+            --gold: #F5C842;
+            --forest: #2D4A3E;
+            --white: #FAFAF8;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'DM Sans', system-ui, sans-serif;
+            --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-cream);
+            color: var(--navy);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            padding-inline: 20px;
+        }
+
+        .wrap { max-width: 780px; margin: 0 auto; padding-block: 48px 72px; }
+
+        .back {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--navy);
+            text-decoration: none;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: clamp(44px, 9vw, 72px);
+            line-height: 0.95;
+            letter-spacing: 0.01em;
+            margin: 28px 0 8px;
+        }
+
+        .meta { font-family: var(--font-mono); font-size: 13px; opacity: 0.7; margin-bottom: 32px; }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            letter-spacing: 0.02em;
+            margin: 44px 0 12px;
+            padding-top: 12px;
+            border-top: 3px solid var(--navy);
+        }
+
+        h3 { font-size: 17px; margin: 22px 0 6px; }
+
+        p, li { font-size: 16px; }
+        p + p { margin-top: 12px; }
+        ul { margin: 10px 0 0 22px; }
+        li + li { margin-top: 6px; }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.86em;
+            background: rgba(13, 27, 42, 0.07);
+            padding: 1px 5px;
+            border-radius: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .callout {
+            background: var(--white);
+            border: 3px solid var(--navy);
+            box-shadow: 6px 6px 0 var(--navy);
+            padding: 18px 20px;
+            margin: 24px 0 8px;
+        }
+        .callout strong { display: block; font-size: 17px; margin-bottom: 4px; }
+
+        .table-scroll { overflow-x: auto; margin-top: 14px; border: 2px solid var(--navy); background: var(--white); }
+        table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+        th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid rgba(13, 27, 42, 0.15); }
+        th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; background: var(--navy); color: var(--white); }
+        tr:last-child td { border-bottom: none; }
+        td:first-child { width: 26%; }
+
+        a { color: var(--forest); }
+        footer { margin-top: 56px; font-family: var(--font-mono); font-size: 13px; opacity: 0.75; }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <a class="back" href="/">&larr; lockinme.com</a>
+
+        <h1>Privacy Policy</h1>
+        <p class="meta">Last updated: 15 September 2026 &bull; Applies to the Lock-In desktop app, the Lock-In web app, and the Lock-In Web Police Chrome extension (version 1.2.1 and later)</p>
+
+        <p>Lock-In is a focus tool. To do its job it needs a small account record: your handle, your blocklists, and your focus sessions. This page lists everything the apps store about you, why, for how long, and how to delete it. It describes what the software actually does, not what it might do.</p>
+
+        <div class="callout">
+            <strong>We do not collect your browsing history or open tabs.</strong>
+            As of extension version 1.2.1, the extension does not record, list, or upload the websites you visit or the tabs you have open. It compares the address of a page you open against your own blocklist, in memory on your device, and forgets it. Earlier extension versions uploaded a list of open-tab website names; that feature has been removed, our database now rejects any such upload, and all previously stored tab lists were deleted on 15 September 2026.
+        </div>
+
+        <h2>What we never collect</h2>
+        <ul>
+            <li>Browsing history, open tabs, or the addresses of pages you visit.</li>
+            <li>The content of web pages, form entries, cookies, or keystrokes. The extension has no access to page content.</li>
+            <li>Your location, contacts, files, or payment details.</li>
+            <li>Analytics, advertising identifiers, or tracking. The apps contain no analytics or advertising code.</li>
+        </ul>
+        <p>We do not sell your data, share it with advertisers, or use it for anything other than running Lock-In.</p>
+
+        <h2>Your sign-in</h2>
+        <p>Accounts are handled by Google Firebase Authentication. When you register or sign in, your email address and password are sent to Firebase. Your password is managed by Firebase and is never stored in the Lock-In database or visible to us. Firebase also sends your verification and password-reset emails.</p>
+
+        <h2>What is stored in your account</h2>
+        <p>Everything below lives in a Google Firebase Realtime Database hosted in Singapore (Google Cloud region <code>asia-southeast1</code>). Only you, while signed in, can read or change your own record, except the few items listed under <em>What other users can see</em>.</p>
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>What</th><th>Details and why</th><th>How long</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Profile</td>
+                        <td>Your handle (as displayed, and in lowercase), a copy of your email address, when the account was created, whether your email is verified, and onboarding progress. Needed to run the account and show your name.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>App settings</td>
+                        <td>Whether a focus session is running, your lock mode, whether the desktop app starts with Windows, and the date the daily counter last reset.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Current session</td>
+                        <td>Whether a session is running, when it ends, the goal you typed for it, the sites and apps it blocks, and a random ID for the device that started it. Lets your phone, computer and extension follow the same session.</td>
+                        <td>Replaced each time a session starts or ends</td>
+                    </tr>
+                    <tr>
+                        <td>Session history</td>
+                        <td>For each finished session: the goal you typed, minutes focused, time, and whether it was completed or ended early. An emergency disarm is logged as an ended session with zero minutes. Powers your dashboard.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Daily totals</td>
+                        <td>Minutes focused per calendar day, used for streaks, plus a running minutes total.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Devices</td>
+                        <td>For each device you use: a random device ID, the label &ldquo;Windows Desktop&rdquo; or &ldquo;Web Browser&rdquo;, minutes used today, and last sync time. No device names, hardware details or IP addresses are stored.</td>
+                        <td>Cleared at the start of each new day</td>
+                    </tr>
+                    <tr>
+                        <td>Blocklists</td>
+                        <td>Website domains you choose to block (for sessions or permanently), default sites you have unblocked, and program names you block (for example <code>discord.exe</code>), with the random ID of the device that added each program.</td>
+                        <td>Until you remove them or delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Friends</td>
+                        <td>The user IDs of friends you add to The Pack.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Online status</td>
+                        <td>Whether you are online, offline, or in a session, and when that last changed.</td>
+                        <td>Replaced whenever it changes</td>
+                    </tr>
+                    <tr>
+                        <td>Extension status</td>
+                        <td>The time the extension last checked in, its version number, and &ldquo;online&rdquo;. Lets the desktop app warn you if the extension is not running. Only written once your profile exists.</td>
+                        <td>Replaced every check-in (about every 30 seconds)</td>
+                    </tr>
+                    <tr>
+                        <td>Google Calendar link</td>
+                        <td>Only if you connect it: the Google Calendar embed link you paste, used to show your calendar in the desktop app. Anyone holding such a link may be able to view that calendar, so disconnect it when you no longer need it.</td>
+                        <td>Until you disconnect it or delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Handle reservation</td>
+                        <td>A separate index that maps your lowercase handle to your user ID, so no one else can take the same handle.</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>Accounts created with older versions may also hold fields those versions wrote, such as an emergency-unlock expiry time or a tab-refresh signal. Current versions do not write them, and Delete Account removes them along with everything else.</p>
+
+        <h2>What other users can see</h2>
+        <p>These items can be read by any signed-in Lock-In user. They contain no email address or activity details.</p>
+        <ul>
+            <li><strong>Your display handle</strong>, so friends can see who you are in The Pack.</li>
+            <li><strong>Your online status</strong> (online, offline, or in a session) and when it last changed.</li>
+            <li><strong>The handle reservation</strong>, which shows that a handle is taken and which user ID holds it.</li>
+        </ul>
+
+        <h2>What stays on your device</h2>
+        <ul>
+            <li><strong>Chrome extension:</strong> your Lock-In user ID, kept in the extension&rsquo;s local storage so it stays signed in. Page addresses are checked against your blocklist in memory and never saved or sent anywhere.</li>
+            <li><strong>Desktop app:</strong> a random device ID, your daily intentions and weekly plan (these are never uploaded), and a local file holding your blocklists and the current session&rsquo;s end time so blocking survives a restart.</li>
+            <li><strong>Web app:</strong> a random device ID.</li>
+        </ul>
+        <p>This local data is removed when you uninstall the app or extension, or clear the browser&rsquo;s site data.</p>
+
+        <h2>Services we rely on</h2>
+        <ul>
+            <li><strong>Google Firebase</strong> (Authentication and Realtime Database) stores your account and the data above.</li>
+            <li><strong>Vercel</strong> hosts this website and the Lock-In web app.</li>
+            <li><strong>GitHub</strong> hosts the desktop app downloads.</li>
+            <li><strong>Google Calendar</strong> is contacted only if you connect a calendar.</li>
+        </ul>
+        <p>These providers process data only to provide their service. We do not share your data with anyone else.</p>
+
+        <h2>Deleting your data</h2>
+        <p>In the desktop app, open the Block Registry screen and use <strong>Delete my account</strong> in the Danger Zone. In one step it removes your entire account record (every item in the table above) and every handle reservation you hold. It then deletes your sign-in account.</p>
+        <p>If Firebase decides you have not signed in recently enough to delete the sign-in account, the app signs you out instead. Your data is already gone at that point, but your email address may remain registered for sign-in. Sign in again and repeat Delete Account, or email us and we will remove it.</p>
+        <p>Two things Delete Account cannot reach:</p>
+        <ul>
+            <li>If other users added you as a friend, their friend lists still contain your user ID. It is a random ID with no name or other data attached, and it no longer points to an account.</li>
+            <li>Data stored on your own devices, listed above. Uninstall the app or extension to remove it.</li>
+        </ul>
+        <p>The web app does not yet have a delete button. If you use Lock-In only on the web, email us and we will delete your account and data.</p>
+
+        <h2>Children</h2>
+        <p>Lock-In is not directed at children under 13, and we do not knowingly collect personal data from them. If you believe a child under 13 has registered, email us at <a href="mailto:caydencmy@gmail.com">caydencmy@gmail.com</a> and we will delete the account and its data.</p>
+
+        <h2>Changes to this policy</h2>
+        <p>If what Lock-In stores changes, we will update this page and the date at the top before the change ships.</p>
+
+        <h2>Contact</h2>
+        <p>Questions, data requests, or deletion requests: <a href="mailto:caydencmy@gmail.com">caydencmy@gmail.com</a></p>
+
+        <footer>Lock-In &bull; lockinme.com &bull; Last updated 15 September 2026</footer>
+    </main>
+</body>
+
+</html>
