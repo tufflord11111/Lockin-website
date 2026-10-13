@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,100..900&family=Patrick+Hand&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --paper: #FBF8F0; --ink: #2B3A55; --ink-soft: #4D719E;
+            --yellow: #F7C948; --mint: #BFE8D2; --mint-ink: #0B5225;
+            --grid: rgba(106, 155, 216, 0.22);
+        }
+        * { box-sizing: border-box; margin: 0; }
+        body {
+            width: 1200px; height: 630px; overflow: hidden;
+            background-color: var(--paper);
+            background-image:
+                linear-gradient(var(--grid) 1.5px, transparent 1.5px),
+                linear-gradient(90deg, var(--grid) 1.5px, transparent 1.5px);
+            background-size: 28px 28px;
+            color: var(--ink);
+            font-family: 'Archivo', sans-serif;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 54px;
+            align-items: center; padding: 0 72px;
+        }
+        h1 {
+            font-size: 76px; font-weight: 800; letter-spacing: -0.035em;
+            line-height: 1.02; font-variation-settings: "wdth" 112;
+        }
+        p { margin-top: 22px; font-size: 23px; line-height: 1.45; max-width: 24ch; color: var(--ink); }
+        .meta { margin-top: 26px; font-size: 19px; font-weight: 700; color: var(--ink-soft); }
+        .card {
+            background: #fff; border: 2px solid var(--ink);
+            border-radius: 14px 16px 13px 17px / 16px 13px 17px 14px;
+            padding: 26px 26px 22px;
+        }
+        .eyebrow { font-family: 'Patrick Hand', cursive; font-size: 20px; color: var(--ink-soft); }
+        .timer { font-size: 66px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin: 6px 0 20px; font-variant-numeric: tabular-nums; }
+        .row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 13px 14px; margin-bottom: 10px;
+            border: 1.5px solid rgba(43, 58, 85, 0.16); border-radius: 4px;
+            font-size: 19px; font-weight: 700;
+        }
+        .row .dot { width: 10px; height: 10px; border-radius: 2px; background: var(--mint); }
+        .row.dead .name { text-decoration: line-through; text-decoration-thickness: 2px; }
+        .row.dead { opacity: .62; }
+        .chip { margin-left: auto; background: var(--mint); color: var(--mint-ink); padding: 3px 9px; border-radius: 3px; font-size: 15px; font-weight: 800; }
+        .idle { opacity: .45; }
+        .idle .dot { background: var(--ink-soft); }
+        .idle .state { margin-left: auto; font-size: 15px; font-weight: 800; }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Press Start.<br>Discord dies.</h1>
+        <p>The blocker you can't talk yourself out of.</p>
+        <div class="meta">Free · Windows · 5 MB</div>
+    </div>
+    <div class="card">
+        <div class="eyebrow">session running</div>
+        <div class="timer">24:51</div>
+        <div class="row dead"><span class="dot"></span><span class="name">Discord.exe</span><span class="chip">killed · 0.8 s</span></div>
+        <div class="row idle"><span class="dot"></span><span class="name">Steam.exe</span><span class="state">on your list</span></div>
+        <div class="row idle"><span class="dot"></span><span class="name">youtube.com</span><span class="state">on your list</span></div>
+    </div>
+</body>
+
+</html>

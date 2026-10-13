@@ -4,1014 +4,836 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lock-In | Your Digital Straitjacket</title>
+    <title>Lock-In — the blocker you can't talk yourself out of</title>
+    <meta name="description"
+        content="Lock-In force-closes the apps and sites on your list every two seconds, for the whole session. No pause. The one way out costs you the session. Free, Windows.">
+    <link rel="canonical" href="https://lockinme.com/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232B3A55'/%3E%3Crect x='9' y='14' width='14' height='11' rx='2' fill='%23F7C948'/%3E%3Cpath d='M12 14v-3a4 4 0 0 1 8 0v3' fill='none' stroke='%23F7C948' stroke-width='2.4'/%3E%3C/svg%3E">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lockinme.com/">
+    <meta property="og:title" content="Lock-In — the blocker you can't talk yourself out of">
+    <meta property="og:description"
+        content="Force-closes the apps and sites on your list every two seconds, for the whole session. No pause. The one way out costs you the session. Free, Windows.">
+    <meta property="og:image" content="https://lockinme.com/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lock-In — the blocker you can't talk yourself out of">
+    <meta name="twitter:description"
+        content="Force-closes the apps and sites on your list every two seconds, for the whole session. No pause. The one way out costs you the session.">
+    <meta name="twitter:image" content="https://lockinme.com/og.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-        rel="stylesheet">
+    <!-- Non-blocking: the stylesheet costs ~2 s of render-blocking time, and
+         display=swap means the text is readable in a fallback until it lands. -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,100..900&family=Patrick+Hand&display=swap"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,100..900&family=Patrick+Hand&display=swap">
+    </noscript>
+
     <style>
+        /* ── Tokens — the app's Notebook theme, on paper ────────────────────── */
         :root {
-            --bg-cream: #F2EDE3;
-            --navy: #0D1B2A;
-            --gold: #F5C842;
-            --forest: #2D4A3E;
-            --white: #FAFAF8;
-            --font-display: 'Bebas Neue', sans-serif;
-            --font-body: 'DM Sans', sans-serif;
-            --font-mono: 'IBM Plex Mono', monospace;
+            --paper: #FBF8F0;
+            --paper-card: #FFFFFF;
+            --ink: #2B3A55;
+            --ink-soft: #4D719E;
+            --yellow: #F7C948;
+            --yellow-pale: #FFF3C4;
+            --pink: #F6A5B7;
+            --mint: #BFE8D2;
+            --mint-ink: #0B5225;
+            --sky: #CFE2FF;
+            --rule: rgba(43, 58, 85, 0.16);
+            --grid: rgba(106, 155, 216, 0.22);
+            --grid-size: 28px;
+
+            --radius: 4px;
+            --border: 2px;
+            --section-y: 88px;
+
+            --font: 'Archivo', system-ui, -apple-system, sans-serif;
+            --font-hand: 'Patrick Hand', 'Comic Sans MS', cursive;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #1E2738;
+                --paper-card: #26324A;
+                --ink: #EDF2FA;
+                --ink-soft: #A9BEDC;
+                --rule: rgba(237, 242, 250, 0.18);
+                --grid: rgba(169, 190, 220, 0.14);
+                --yellow-pale: #3A3524;
+            }
         }
+
+        :root[data-theme="dark"] {
+            --paper: #1E2738;
+            --paper-card: #26324A;
+            --ink: #EDF2FA;
+            --ink-soft: #A9BEDC;
+            --rule: rgba(237, 242, 250, 0.18);
+            --grid: rgba(169, 190, 220, 0.14);
+        }
+
+        /* ── Base ───────────────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--bg-cream);
-            color: var(--navy);
-            font-family: var(--font-body);
+            margin: 0;
+            background-color: var(--paper);
+            background-image:
+                linear-gradient(var(--grid) 1.5px, transparent 1.5px),
+                linear-gradient(90deg, var(--grid) 1.5px, transparent 1.5px);
+            background-size: var(--grid-size) var(--grid-size);
+            color: var(--ink);
+            font-family: var(--font);
+            font-size: 17px;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
+        img, svg { max-width: 100%; display: block; }
+
+        a { color: inherit; }
+
+        h1, h2, h3 {
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin: 0;
+            font-variation-settings: "wdth" 112;
         }
 
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        h1 { font-size: clamp(2.5rem, 6.2vw, 4.4rem); }
+        h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); }
+        h3 { font-size: 1.12rem; letter-spacing: -0.02em; font-variation-settings: "wdth" 104; }
+        p { margin: 0 0 1rem; }
+
+        .wrap { width: min(1120px, 100% - 48px); margin-inline: auto; }
+
+        section { padding: var(--section-y) 0; border-top: 1px solid var(--rule); }
+        section:first-of-type { border-top: 0; }
+
+        .page-label {
+            font-family: var(--font-hand);
+            font-size: 1.05rem;
+            color: var(--ink-soft);
+            margin: 0 0 6px;
         }
 
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .lede { font-size: clamp(1.02rem, 1.6vw, 1.2rem); max-width: 54ch; color: var(--ink); }
+        .muted { color: var(--ink-soft); }
+        .small { font-size: 0.86rem; }
 
-        /* Nav */
-        nav {
-            padding: 24px 0;
-            border-bottom: 1px solid rgba(13, 27, 42, 0.05);
-        }
+        :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 2px; }
 
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            text-decoration: none;
-            color: var(--navy);
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--navy);
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--forest);
-        }
-
+        /* ── Buttons ────────────────────────────────────────────────────────── */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
+            display: inline-flex; align-items: center; gap: 8px;
+            font: inherit; font-weight: 800; font-size: 0.97rem;
+            letter-spacing: -0.01em;
+            padding: 13px 20px;
+            border: var(--border) solid var(--ink);
+            border-radius: var(--radius);
+            background: var(--paper-card);
+            color: var(--ink);
             text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
-            border: none;
-            font-family: var(--font-body);
+            transition: background-color .15s ease, color .15s ease, transform .15s ease;
         }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: var(--ink); color: var(--paper); }
+        .btn-primary:hover { background: var(--paper-card); color: var(--ink); }
+        .btn-yellow { background: var(--yellow); color: #2B3A55; border-color: #2B3A55; }
+        .btn-yellow:hover { background: #2B3A55; color: var(--yellow); }
 
-        .btn-lg {
-            padding: 16px 32px;
-            font-size: 1.1rem;
+        /* ── Header ─────────────────────────────────────────────────────────── */
+        header {
+            position: sticky; top: 0; z-index: 50;
+            background: color-mix(in srgb, var(--paper) 92%, transparent);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--rule);
         }
-
-        .btn-navy {
-            background-color: var(--navy);
-            color: #FAFAF8 !important;
+        .nav { display: flex; align-items: center; gap: 28px; padding: 14px 0; }
+        .wordmark {
+            font-weight: 900; font-size: 1.16rem; letter-spacing: 0.02em;
+            font-variation-settings: "wdth" 120;
+            text-decoration: none; margin-right: auto;
         }
+        .nav-links { display: flex; gap: 22px; align-items: center; }
+        .nav-links a { font-size: 0.92rem; font-weight: 600; text-decoration: none; color: var(--ink-soft); }
+        .nav-links a:hover { color: var(--ink); }
+        @media (max-width: 719px) { .nav-links { display: none; } }
 
-        .btn-navy:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 27, 42, 0.2);
-        }
+        /* ── Hero ───────────────────────────────────────────────────────────── */
+        .hero { padding-top: 60px; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+        .hero-grid > * { min-width: 0; }
+        @media (max-width: 899px) { .hero-grid { grid-template-columns: 1fr; gap: 44px; } }
 
-        .btn-gold {
-            background-color: var(--gold);
-            color: var(--navy);
-        }
+        .hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 14px; }
 
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(245, 200, 66, 0.3);
-        }
+        /* ── The kill feed ──────────────────────────────────────────────────── */
+        .feed-wrap { position: relative; }
 
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--white);
-            color: var(--white);
-        }
 
-        .btn-outline:hover {
-            background-color: rgba(250, 250, 248, 0.1);
-        }
-
-        /* Hero */
-        .hero {
+        .feed {
             position: relative;
-            padding: 80px 0 200px;
-            overflow: hidden;
+            background: var(--paper-card);
+            border: var(--border) solid var(--ink);
+            border-radius: 14px 16px 13px 17px / 16px 13px 17px 14px;
+            padding: 22px 22px 18px;
         }
 
-        .hero-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 2;
-            position: relative;
-            gap: 40px;
+        .feed-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+        .feed-eyebrow { font-family: var(--font-hand); font-size: 1rem; color: var(--ink-soft); }
+        .feed-timer {
+            font-size: 3.3rem; font-weight: 800; letter-spacing: -0.04em;
+            font-variant-numeric: tabular-nums; line-height: 1; margin: 2px 0 16px;
+            font-variation-settings: "wdth" 108;
+        }
+        .feed-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+        .row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 11px;
+            border: 1.5px solid var(--rule);
+            border-radius: var(--radius);
+            font-size: 0.93rem; font-weight: 700;
+            color: var(--ink-soft);
+            transition: color .35s ease, border-color .35s ease, background-color .35s ease;
+        }
+        .row .dot { width: 9px; height: 9px; border-radius: 2px; background: var(--ink-soft); flex: 0 0 auto; transition: background-color .35s ease; }
+        .row .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .row .state { margin-left: auto; font-size: 0.76rem; font-weight: 800; white-space: nowrap; }
+
+        .row.open { color: var(--ink); border-color: var(--ink); background: var(--yellow-pale); }
+        .row.open .dot { background: var(--yellow); }
+        .row.open .state { color: var(--ink); }
+
+        .row.killed { color: var(--ink-soft); border-color: var(--rule); background: transparent; }
+        .row.killed .name { text-decoration: line-through; text-decoration-thickness: 2px; }
+        .row.killed .dot { background: var(--mint); }
+        .row.killed .state {
+            background: var(--mint); color: var(--mint-ink);
+            padding: 2px 7px; border-radius: 3px;
         }
 
-        .hero-text {
-            flex: 1.2;
+        .denied-card {
+            margin-top: 10px; padding: 14px 12px; text-align: center;
+            border: 2px dashed var(--ink); border-radius: var(--radius);
+            background: var(--paper);
+            font-weight: 900; letter-spacing: 0.1em; font-size: 0.78rem;
+            opacity: 0; transform: scale(0.97);
+            transition: opacity .3s ease, transform .3s ease;
         }
+        .denied-card.show { opacity: 1; transform: scale(1); }
+        .denied-card small { display: block; font-weight: 600; letter-spacing: 0; color: var(--ink-soft); margin-top: 3px; }
 
-        .hero-tag {
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            color: var(--forest);
-            margin-bottom: 24px;
-            display: block;
-            font-weight: 600;
-        }
+        /* Sticky note taped to the feed card */
+        .feed-wrap { padding-bottom: 86px; }
 
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(4rem, 8vw, 7.5rem);
-            line-height: 0.85;
-            margin-bottom: 24px;
-            color: var(--navy);
-        }
-
-        .hero-desc {
-            font-size: 1.25rem;
-            margin-bottom: 40px;
-            max-width: 500px;
-            color: var(--navy);
-            opacity: 0.9;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-        }
-
-        .hero-img {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            position: relative;
-        }
-
-        .hero-svg {
-            max-width: 100%;
-            height: auto;
-            width: 500px;
-        }
-
-        /* Diagonal Backgrounds */
-        .diagonal-bg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 380px;
-            background-color: var(--forest);
-            clip-path: polygon(0 35%, 100% 0, 100% 100%, 0 100%);
-            z-index: 1;
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            position: relative;
+        .note-taped {
+            /* Below the card, not over it — it used to cover the ACCESS DENIED
+               wall, which is the one frame the site most needs you to see. */
+            position: absolute; left: 4px; bottom: -8px; width: 232px;
+            background: var(--yellow); color: #2B3A55;
+            font-family: var(--font-hand); font-size: 1rem; line-height: 1.35;
+            padding: 16px 14px 14px; transform: rotate(2.4deg);
+            box-shadow: 0 6px 16px rgba(20, 40, 80, 0.14);
             z-index: 3;
-            background: var(--forest);
-            padding: 48px 0;
-            width: 100%;
-            margin-top: -2px;
-            /* Ensure no bleed */
+        }
+        @media (max-width: 899px) {
+            .feed-wrap { padding-bottom: 0; }
+            .note-taped { position: static; width: auto; margin: 26px auto 0; transform: rotate(-1deg); }
         }
 
-        .stats-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
+        .tape {
+            position: absolute; top: -11px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+            pointer-events: none;
         }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            flex: 1;
-            font-family: var(--font-display);
-            font-size: 3.5rem;
-            color: var(--gold);
-            line-height: 1;
+        /* ── Ticker ─────────────────────────────────────────────────────────── */
+        .ticker { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 0; overflow: hidden; }
+        .ticker-track { display: flex; gap: 0; width: max-content; animation: slide 38s linear infinite; }
+        .ticker-item {
+            padding: 13px 26px; white-space: nowrap;
+            font-size: 0.87rem; font-weight: 700; color: var(--ink-soft);
+            border-right: 1px solid var(--rule);
         }
+        .ticker-item b { color: var(--ink); font-weight: 800; }
+        @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        .stat-item:nth-child(1),
-        .stat-item:nth-child(2) {
-            border-right: 1px solid rgba(250, 250, 248, 0.2);
-        }
+        /* ── Sticky notes ───────────────────────────────────────────────────── */
+        .notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 36px; }
+        .notes > * { min-width: 0; }
+        @media (max-width: 760px) { .notes { grid-template-columns: 1fr; gap: 30px; } }
 
-        .stat-item span {
-            display: block;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            color: var(--white);
-            opacity: 0.8;
-            margin-top: 8px;
-        }
-
-        /* Features */
-        .features {
-            padding: 120px 0;
-            background-color: var(--bg-cream);
+        .note {
             position: relative;
-            z-index: 2;
+            font-family: var(--font-hand); font-size: 1.14rem; line-height: 1.4;
+            color: #2B3A55;
+            padding: 30px 20px 26px;
+            box-shadow: 0 6px 16px rgba(20, 40, 80, 0.13);
+        }
+        .note-y { background: var(--yellow); transform: rotate(-1.4deg); }
+        .note-p { background: var(--pink); transform: rotate(1.1deg); }
+        .note-s { background: var(--sky); transform: rotate(-0.6deg); }
+        .note-m { background: var(--mint); transform: rotate(0.8deg); }
+
+        .pin { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
+
+        /* ── Steps ──────────────────────────────────────────────────────────── */
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
+        .steps > * { min-width: 0; }
+        @media (max-width: 860px) { .steps { grid-template-columns: 1fr; gap: 36px; } }
+
+        .step-n {
+            font-family: var(--font-hand); font-size: 1.5rem; color: var(--ink-soft);
+            line-height: 1; margin-bottom: 8px;
+        }
+        .shot {
+            border: var(--border) solid var(--ink); border-radius: var(--radius);
+            overflow: hidden; margin-top: 14px; background: var(--paper-card);
+        }
+        /* One height for the three step figures — their source crops have
+           different shapes and a ragged row read as a layout bug. */
+        .shot img { width: 100%; height: auto; display: block; }
+        .steps .shot img { aspect-ratio: 4 / 3; object-fit: cover; object-position: top center; }
+        .looks .shot img { aspect-ratio: 41 / 28; object-fit: cover; }
+
+        /* ── Timeline ───────────────────────────────────────────────────────── */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 34px 0 10px; border: var(--border) solid var(--ink); border-radius: var(--radius); overflow: hidden; }
+        .timeline > * { min-width: 0; }
+        .tl {
+            padding: 18px 16px; border-right: 1.5px solid var(--rule);
+        }
+        .tl:last-child { border-right: 0; }
+        .tl b { display: block; font-size: 1.05rem; font-variation-settings: "wdth" 108; }
+        .tl span { font-size: 0.85rem; color: var(--ink-soft); }
+        .tl-end { background: var(--mint); color: var(--mint-ink); }
+        .tl-end span { color: var(--mint-ink); opacity: 0.78; }
+        @media (max-width: 700px) { .timeline { grid-template-columns: 1fr; } .tl { border-right: 0; border-bottom: 1.5px solid var(--rule); } .tl:last-child { border-bottom: 0; } }
+
+        /* ── Looks strip ────────────────────────────────────────────────────── */
+        .looks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 36px; }
+        .looks > * { min-width: 0; }
+        @media (max-width: 900px) { .looks { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { .looks { grid-template-columns: 1fr; } }
+        .look-name { font-family: var(--font-hand); font-size: 1.1rem; margin-top: 8px; text-align: center; }
+
+        /* ── Two-column fit ─────────────────────────────────────────────────── */
+        .fit { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 36px; }
+        .fit > * { min-width: 0; }
+        @media (max-width: 760px) { .fit { grid-template-columns: 1fr; } }
+        .fit ul { margin: 12px 0 0; padding-left: 20px; }
+        .fit li { margin-bottom: 7px; }
+        .fit h3 { font-family: var(--font-hand); font-size: 1.3rem; font-weight: 400; letter-spacing: 0; }
+
+        /* ── FAQ ────────────────────────────────────────────────────────────── */
+        .faq { margin-top: 32px; border-top: 1px solid var(--rule); }
+        details { border-bottom: 1px solid var(--rule); }
+        summary {
+            cursor: pointer; padding: 18px 0; font-weight: 800; font-size: 1.04rem;
+            list-style: none; display: flex; gap: 14px; align-items: flex-start;
+            font-variation-settings: "wdth" 106;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "+"; margin-left: auto; font-weight: 800; color: var(--ink-soft); }
+        details[open] summary::after { content: "–"; }
+        details p { margin: 0 0 18px; max-width: 68ch; color: var(--ink); }
+
+        /* ── Final CTA + footer ─────────────────────────────────────────────── */
+        .cta { text-align: center; }
+        .cta .btn { margin-top: 18px; }
+        footer { border-top: 1px solid var(--rule); padding: 30px 0 46px; font-size: 0.87rem; color: var(--ink-soft); }
+
+        /* ── Reveal (JS adds .reveal; motion.js animates) ───────────────────── */
+        .reveal { opacity: 0; }
+        .is-in { opacity: 1; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .ticker-track { animation: none; }
+            .reveal { opacity: 1 !important; transform: none !important; }
+            *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            margin-top: 64px;
-        }
-
-        .feature-card {
-            background-color: var(--white);
-            border-radius: 32px;
-            padding: 48px;
-            box-shadow: 0 20px 40px rgba(13, 27, 42, 0.04);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-        }
-
-        .feature-badge {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 56px;
-            height: 56px;
-            background-color: var(--gold);
-            color: var(--navy);
-            border-radius: 50%;
-            font-family: var(--font-mono);
-            font-weight: bold;
-            font-size: 1.25rem;
-            margin-bottom: 32px;
-        }
-
-        .feature-title {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-            color: var(--navy);
-            line-height: 1.1;
-        }
-
-        .feature-desc {
-            color: rgba(13, 27, 42, 0.8);
-            margin-bottom: 32px;
-            font-size: 1.1rem;
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-        }
-
-        /* How It Works */
-        .how-it-works {
-            padding: 80px 0 160px;
-            background-color: var(--bg-cream);
-        }
-
-        .section-title {
-            font-family: var(--font-display);
-            font-size: 4.5rem;
-            text-align: center;
-            margin-bottom: 80px;
-            color: var(--navy);
-            line-height: 1;
-        }
-
-        .timeline {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 28px;
-            left: 50px;
-            right: 50px;
-            height: 2px;
-            background-color: rgba(13, 27, 42, 0.1);
-            z-index: 1;
-        }
-
-        .timeline-step {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 220px;
-        }
-
-        .step-number {
-            width: 56px;
-            height: 56px;
-            background-color: var(--navy);
-            color: var(--white);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: var(--font-mono);
-            font-weight: bold;
-            font-size: 1.25rem;
-            margin: 0 auto 24px;
-            border: 6px solid var(--bg-cream);
-        }
-
-        .step-title {
-            font-weight: bold;
-            font-size: 1.25rem;
-            margin-bottom: 12px;
-            color: var(--navy);
-        }
-
-        .step-desc {
-            font-size: 1rem;
-            color: rgba(13, 27, 42, 0.7);
-        }
-
-        /* The Pack */
-        .the-pack {
-            padding: 120px 0;
-            background-color: var(--white);
-            border-radius: 48px;
-            margin: 0 24px;
-            box-shadow: 0 20px 40px rgba(13, 27, 42, 0.04);
-        }
-
-        .pack-content {
-            display: flex;
-            align-items: center;
-            gap: 80px;
-        }
-
-        .pack-text {
-            flex: 1;
-        }
-
-        .pack-title {
-            font-family: var(--font-display);
-            font-size: clamp(3.5rem, 6vw, 5rem);
-            margin-bottom: 24px;
-            color: var(--navy);
-            line-height: 0.9;
-        }
-
-        .pack-desc {
-            font-size: 1.25rem;
-            color: rgba(13, 27, 42, 0.8);
-            margin-bottom: 40px;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 160px 0;
-            background-color: var(--navy);
-            color: var(--white);
-            text-align: center;
-            margin-top: 120px;
-        }
-
-        .cta-title {
-            font-family: var(--font-display);
-            font-size: clamp(4rem, 8vw, 7rem);
-            color: var(--white);
-            margin-bottom: 48px;
-            line-height: 0.9;
-        }
-
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .sys-req {
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            color: rgba(250, 250, 248, 0.5);
-        }
-
-        /* Self-backed chip so it reads on BOTH hero backgrounds. The green
-           diagonal band's position shifts with viewport width, so the note
-           can land on cream or on green — the chip makes that irrelevant.
-           Fade lives in the text colour, not `opacity`, which would also
-           fade the chip. */
-        .hero-feature {
-            margin-top: -24px;
-            margin-bottom: 32px;
-            max-width: 500px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--navy);
-            opacity: 0.7;
-        }
-        .hero-note {
-            display: block;
-            width: fit-content;
-            max-width: 100%;
-            margin-top: 16px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            background: rgba(242, 237, 227, 0.92);
-            border: 1px solid rgba(13, 27, 42, 0.15);
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: rgba(13, 27, 42, 0.85);
-        }
-
-        /* Secondary installer link under the hero download button. */
-        .hero-alt {
-            margin-top: 14px;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-        }
-        .hero-alt a {
-            color: var(--navy);
-            opacity: 0.75;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-        .hero-alt a:hover { opacity: 1; }
-
-        /* Footer */
-        footer {
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 48px 0;
-            border-top: 1px solid rgba(250, 250, 248, 0.1);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-logo {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            color: var(--gold);
-            letter-spacing: 1px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 32px;
-        }
-
-        .footer-links a {
-            color: rgba(250, 250, 248, 0.7);
-            text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--gold);
-        }
-
-        @media (max-width: 992px) {
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero-text {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .hero-desc {
-                text-align: center;
-            }
-
-            .hero-buttons {
-                justify-content: center;
-            }
-
-            .hero-note {
-                text-align: center;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero-alt {
-                text-align: center;
-            }
-
-            .hero-img {
-                margin-top: 40px;
-                justify-content: center;
-            }
-
-            .stats-container {
-                gap: 40px;
-            }
-
-            .pack-content {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .stats-container {
-                flex-direction: column;
-                gap: 32px;
-            }
-
-            .stat-item {
-                width: 100%;
-                padding: 16px 0;
-            }
-
-            .stat-item:nth-child(1),
-            .stat-item:nth-child(2) {
-                border-right: none;
-                border-bottom: 1px solid rgba(250, 250, 248, 0.2);
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .hero-buttons .btn {
-                width: 100%;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .timeline {
-                flex-direction: column;
-                gap: 48px;
-                align-items: center;
-            }
-
-            .timeline::before {
-                display: none;
-            }
-
-            .the-pack {
-                margin: 0 16px;
-                border-radius: 32px;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                padding: 0 24px;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                gap: 32px;
-                text-align: center;
-            }
-        }
+        @media (max-width: 720px) { :root { --section-y: 64px; } .wrap { width: min(1120px, 100% - 32px); } }
     </style>
 </head>
 
 <body>
-    <div id="inviteBanner" style="display:none; width: 100%; background: #0F1E35; padding: 1rem 3rem; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
-        <div>
-            <span style="font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #F5C842; display: block; margin-bottom: 0.3rem;">// OPERATOR INVITE</span>
-            <span style="font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #FAFAF8; font-weight: 700;" id="bannerText">You've been invited to Lock-In</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
-            <div style="font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,232,0.4);">Operator Code:</div>
-            <div style="font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #F5C842; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="bannerUid">—</div>
-            <button id="bannerCopyBtn" onclick="copyInviteCode()" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; background: #F5C842; color: #0F1E35; border: none; padding: 0.5rem 1rem; cursor: pointer; font-weight: 700;">COPY CODE</button>
-            <a href="#download" style="font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; background: transparent; color: #FAFAF8; border: 1px solid rgba(245,240,232,0.3); padding: 0.5rem 1rem; text-decoration: none;">↓ DOWNLOAD</a>
-        </div>
-    </div>
-    <nav>
-        <div class="container nav-content">
-            <a href="#" class="logo">LOCK-IN</a>
+    <header>
+        <nav class="wrap nav">
+            <a href="#top" class="wordmark">LOCK-IN</a>
             <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
+                <a href="#how">How it works</a>
+                <a href="#exit">The way out</a>
                 <a href="#pack">The Pack</a>
-                <a href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
-                    download="Lock-In_1.2.7_x64_en-US.msi"
-                    class="btn btn-navy">↓ Download Free</a>
+                <a href="#looks">Looks</a>
+                <a href="#faq">FAQ</a>
             </div>
-        </div>
-    </nav>
-
-    <header class="hero">
-        <div class="diagonal-bg"></div>
-        <div class="container hero-content">
-            <div class="hero-text fade-in">
-                <span class="hero-tag">// OPERATOR VAULT v1.2.7</span>
-                <h1 class="hero-title">YOUR DIGITAL<br>STRAIT-<br>JACKET.</h1>
-                <p class="hero-desc">Lock-In kills distracting apps on your PC and blocks time-wasting sites in Chrome
-                    the moment you engage. No willpower required.</p>
-                <p class="hero-feature">Four looks &mdash; Operator, Notebook, Bento, Botanical. Pick yours in Protocols.</p>
-                <div class="hero-buttons">
-                    <a href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
-                        download="Lock-In_1.2.7_x64_en-US.msi"
-                        class="btn btn-navy btn-lg">↓ Download for Windows — Free</a>
-                    <a href="https://chromewebstore.google.com/detail/pcmcaccnegefcjhdabjjfhaakjfeocea"
-                        class="btn btn-gold btn-lg">Add to Chrome</a>
-                </div>
-                <p class="hero-alt">
-                    <a href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64-setup.exe"
-                        download="Lock-In_1.2.7_x64-setup.exe">No admin rights? Get the portable installer</a>
-                </p>
-                <p class="hero-note">Windows may show a security warning — click More info, then Run anyway.</p>
-            </div>
-            <div class="hero-img fade-in">
-                <svg class="hero-svg" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Desk setup -->
-                    <rect x="50" y="280" width="400" height="20" fill="#0D1B2A" rx="10" />
-                    <rect x="100" y="300" width="20" height="100" fill="#0D1B2A" />
-                    <rect x="380" y="300" width="20" height="100" fill="#0D1B2A" />
-
-                    <!-- Monitor -->
-                    <rect x="80" y="140" width="160" height="100" fill="#FAFAF8" stroke="#0D1B2A" stroke-width="8"
-                        rx="12" />
-                    <rect x="150" y="240" width="20" height="40" fill="#0D1B2A" />
-
-                    <!-- UI on screen -->
-                    <rect x="100" y="160" width="80" height="8" fill="#2D4A3E" rx="4" />
-                    <rect x="100" y="180" width="60" height="8" fill="#F5C842" rx="4" />
-                    <rect x="100" y="200" width="120" height="8" fill="#0D1B2A" opacity="0.2" rx="4" />
-                    <rect x="100" y="215" width="90" height="8" fill="#0D1B2A" opacity="0.2" rx="4" />
-
-                    <!-- Character (Operator) -->
-                    <!-- Body -->
-                    <path d="M 380 280 Q 380 180 320 180 L 280 180 L 280 280 Z" fill="#2D4A3E" />
-                    <!-- Head -->
-                    <circle cx="310" cy="130" r="35" fill="#F5C842" />
-                    <!-- Visor/Glasses -->
-                    <rect x="275" y="120" width="40" height="16" fill="#0D1B2A" rx="8" />
-                    <!-- Arm -->
-                    <path d="M 330 200 L 240 250" stroke="#F5C842" stroke-width="20" stroke-linecap="round" />
-
-                    <!-- Floating distraction elements (being blocked) -->
-                    <g transform="translate(420, 100)">
-                        <circle cx="0" cy="0" r="15" fill="#FAFAF8" stroke="#0D1B2A" stroke-width="4" />
-                        <line x1="-15" y1="-15" x2="15" y2="15" stroke="#0D1B2A" stroke-width="4" />
-                    </g>
-                    <g transform="translate(250, 60)">
-                        <rect x="-15" y="-15" width="30" height="30" fill="#FAFAF8" stroke="#0D1B2A" stroke-width="4"
-                            rx="4" />
-                        <line x1="-20" y1="-20" x2="20" y2="20" stroke="#0D1B2A" stroke-width="4" />
-                    </g>
-                    <g transform="translate(100, 80)">
-                        <path d="M -15 0 Q 0 -20 15 0 Q 0 20 -15 0" fill="#FAFAF8" stroke="#0D1B2A" stroke-width="4" />
-                        <line x1="-15" y1="-15" x2="15" y2="15" stroke="#0D1B2A" stroke-width="4" />
-                    </g>
-                </svg>
-            </div>
-        </div>
+            <a class="btn btn-yellow"
+                href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
+                download>Download free</a>
+        </nav>
     </header>
 
-    <div class="stats-bar">
-        <div class="container stats-container fade-in">
-            <div class="stat-item">
-                4+
-                <span>Session Modes</span>
-            </div>
-            <div class="stat-item">
-                0
-                <span>Distractions Tolerated</span>
-            </div>
-            <div class="stat-item">
-                &infin;
-                <span>Custom Block Rules</span>
-            </div>
-        </div>
-    </div>
-
-    <section id="features" class="features">
-        <div class="container">
-            <h2 class="section-title fade-in">WHY YOU NEED THIS</h2>
-            <div class="features-grid">
-
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">01</div>
-                    <h3 class="feature-title">NUCLEAR MODE</h3>
-                    <p class="feature-desc">Once activated, you cannot exit, close, or uninstall the app until the timer
-                        expires. Complete lockdown of your focus environment.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="#F5C842" opacity="0.15" />
-                        <path d="M 30 70 L 50 25 L 70 70 Z" fill="#F5C842" stroke="#0D1B2A" stroke-width="6"
-                            stroke-linejoin="round" />
-                        <circle cx="50" cy="58" r="4" fill="#0D1B2A" />
-                        <rect x="47" y="40" width="6" height="12" fill="#0D1B2A" rx="2" />
-                    </svg>
+    <main id="top">
+        <!-- ── Hero ────────────────────────────────────────────────────────── -->
+        <section class="hero">
+            <div class="wrap hero-grid">
+                <div>
+                    <h1>Press Start.<br>Discord dies.</h1>
+                    <p class="lede" style="margin-top:20px">Lock-In force-closes the apps and sites on your list every
+                        two seconds, for the whole session. No pause button. The one way out is a five-minute fuse that
+                        throws the session away. Free. Windows. 5&nbsp;MB.</p>
+                    <div class="hero-buttons">
+                        <a class="btn btn-primary"
+                            href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
+                            download>Download for Windows — free</a>
+                        <a class="btn" href="#how">See how it works</a>
+                    </div>
+                    <p class="small muted" style="max-width:46ch">Windows will warn you it's unsigned. More info → Run
+                        anyway. That's the whole install.</p>
                 </div>
 
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">02</div>
-                    <h3 class="feature-title">APP TERMINATOR</h3>
-                    <p class="feature-desc">Instantly kills known distraction applications like Discord, Steam, or
-                        Spotify on Windows. They simply won't open.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="#2D4A3E" opacity="0.1" />
-                        <rect x="25" y="25" width="50" height="50" rx="10" fill="#FAFAF8" stroke="#0D1B2A"
-                            stroke-width="6" />
-                        <line x1="35" y1="35" x2="65" y2="65" stroke="#2D4A3E" stroke-width="8"
-                            stroke-linecap="round" />
-                        <line x1="65" y1="35" x2="35" y2="65" stroke="#2D4A3E" stroke-width="8"
-                            stroke-linecap="round" />
-                    </svg>
-                </div>
+                <div class="feed-wrap">
+                    <div class="feed" id="feed">
+                        <div class="tape" aria-hidden="true">
+                            <svg width="84" height="22" viewBox="0 0 84 22">
+                                <defs>
+                                    <pattern id="tape-mint" width="8" height="22" patternUnits="userSpaceOnUse"
+                                        patternTransform="rotate(30)">
+                                        <rect width="8" height="22" fill="#BFE8D2" />
+                                        <rect width="3" height="22" fill="#8FD3B0" />
+                                    </pattern>
+                                </defs>
+                                <path d="M2 3 L82 1 L83 19 L1 21 Z" fill="url(#tape-mint)" />
+                                <path d="M2 3 L82 1 L83 19 L1 21 Z" fill="none" stroke="#fff" stroke-opacity="0.5"
+                                    stroke-width="1" />
+                            </svg>
+                        </div>
 
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">03</div>
-                    <h3 class="feature-title">CHROME INTERCEPTOR</h3>
-                    <p class="feature-desc">The bundled extension syncs with your desktop blocklist through your account, so
-                        sites stay blocked in Chrome without relying on weak browser limits.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="45" fill="#FAFAF8" stroke="#0D1B2A" stroke-width="6" />
-                        <circle cx="50" cy="50" r="18" fill="#0D1B2A" />
-                        <path d="M 50 32 Q 75 32 95 50" fill="none" stroke="#F5C842" stroke-width="8"
-                            stroke-linecap="round" />
-                        <path d="M 50 68 Q 25 68 5 50" fill="none" stroke="#2D4A3E" stroke-width="8"
-                            stroke-linecap="round" />
-                    </svg>
-                </div>
+                        <div class="feed-head">
+                            <span class="feed-eyebrow">session running</span>
+                            <span class="feed-eyebrow" aria-hidden="true">no pause</span>
+                        </div>
+                        <div class="feed-timer" id="timer" role="timer" aria-live="off">25:00</div>
 
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">04</div>
-                    <h3 class="feature-title">THE PACK</h3>
-                    <p class="feature-desc">Add operators by username and compete on The Weekly Arena leaderboard. Your
-                        uptime is tracked automatically — every minute locked in counts.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="40" r="15" fill="#0D1B2A" />
-                        <path d="M 20 80 Q 50 50 80 80" fill="none" stroke="#0D1B2A" stroke-width="12"
-                            stroke-linecap="round" />
-                        <circle cx="20" cy="50" r="10" fill="#2D4A3E" />
-                        <path d="M 0 85 Q 20 65 40 85" fill="none" stroke="#2D4A3E" stroke-width="8"
-                            stroke-linecap="round" />
-                        <circle cx="80" cy="50" r="10" fill="#F5C842" />
-                        <path d="M 60 85 Q 80 65 100 85" fill="none" stroke="#F5C842" stroke-width="8"
-                            stroke-linecap="round" />
-                    </svg>
-                </div>
+                        <ul class="feed-list" id="rows">
+                            <li class="row" data-app="Discord.exe"><span class="dot"></span><span
+                                    class="name">Discord.exe</span><span class="state">on your list</span></li>
+                            <li class="row" data-app="Steam.exe"><span class="dot"></span><span
+                                    class="name">Steam.exe</span><span class="state">on your list</span></li>
+                            <li class="row" data-app="youtube.com" data-site="1"><span class="dot"></span><span
+                                    class="name">youtube.com</span><span class="state">on your list</span></li>
+                            <li class="row" data-app="tiktok.com" data-site="1"><span class="dot"></span><span
+                                    class="name">tiktok.com</span><span class="state">on your list</span></li>
+                            <li class="row" data-app="LeagueClient.exe"><span class="dot"></span><span
+                                    class="name">LeagueClient.exe</span><span class="state">on your list</span></li>
+                        </ul>
 
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">05</div>
-                    <h3 class="feature-title">STRATEGIC PLANNER</h3>
-                    <p class="feature-desc">Log intentions per day on the weekly calendar. Set your core mission target.
-                        Your objectives stay locked in plain sight — no excuses, no ambiguity.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="15" y="25" width="70" height="60" rx="8" fill="none" stroke="#0D1B2A"
-                            stroke-width="8" />
-                        <line x1="15" y1="45" x2="85" y2="45" stroke="#0D1B2A" stroke-width="8" />
-                        <line x1="30" y1="15" x2="30" y2="35" stroke="#F5C842" stroke-width="8"
-                            stroke-linecap="round" />
-                        <line x1="70" y1="15" x2="70" y2="35" stroke="#F5C842" stroke-width="8"
-                            stroke-linecap="round" />
-                        <rect x="30" y="55" width="15" height="15" fill="#2D4A3E" rx="3" />
-                        <rect x="55" y="55" width="15" height="15" fill="#0D1B2A" opacity="0.2" rx="3" />
-                    </svg>
-                </div>
+                        <div class="denied-card" id="denied">ACCESS DENIED<small>youtube.com — blocked for this
+                                session</small></div>
+                    </div>
 
-                <div class="feature-card fade-in">
-                    <div class="feature-badge">06</div>
-                    <h3 class="feature-title">OMNI-SYNC</h3>
-                    <p class="feature-desc">Your blocklists, settings, and uptime data sync seamlessly between the
-                        desktop app and Chrome extension in real time.</p>
-                    <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 25 50 Q 50 10 75 50" fill="none" stroke="#2D4A3E" stroke-width="8"
-                            stroke-linecap="round" />
-                        <path d="M 75 50 Q 50 90 25 50" fill="none" stroke="#F5C842" stroke-width="8"
-                            stroke-linecap="round" />
-                        <polygon points="65,42 80,50 65,58" fill="#2D4A3E" />
-                        <polygon points="35,58 20,50 35,42" fill="#F5C842" />
-                    </svg>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="how-it-works" class="how-it-works">
-        <div class="container">
-            <h2 class="section-title fade-in">THE PROTOCOL</h2>
-            <div class="timeline fade-in">
-                <div class="timeline-step">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Configure Targets</div>
-                    <div class="step-desc">Input your worst digital vices. Social media, games, news feeds.</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Set Parameter</div>
-                    <div class="step-desc">Choose your session mode: Sprint 25, Flow 45, Deep 60, or Lock 90 minutes.
+                    <div class="note-taped">restarted my laptop to get past my blocker. still on YouTube.<br>— me, 2am
                     </div>
                 </div>
-                <div class="timeline-step">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Engage Vault</div>
-                    <div class="step-desc">Lock-In executes local restrictions and syncs to Chrome.</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Do The Work</div>
-                    <div class="step-desc">No escape. You have no choice but to be productive.</div>
-                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="pack" class="the-pack fade-in">
-        <div class="pack-content container">
-            <div class="pack-text">
-                <h2 class="pack-title">JOIN THE PACK.</h2>
-                <p class="pack-desc">Isolation breeds complacency. Lock-In tracks your deep work sessions and pits you
-                    against other operators globally. When you see others crushing 10-hour focus blocks, you'll feel the
-                    pressure to step up.</p>
-            </div>
+        <!-- ── Ticker ──────────────────────────────────────────────────────── -->
+        <div class="ticker" aria-hidden="true">
+            <div class="ticker-track" id="ticker"></div>
         </div>
-    </section>
 
-    <section id="download" class="cta-section">
-        <div class="container fade-in">
-            <h2 class="cta-title">READY TO LOCK IN?</h2>
-            <div class="cta-buttons">
-                <a href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
-                    download="Lock-In_1.2.7_x64_en-US.msi"
-                    class="btn btn-gold btn-lg">↓ Download for Windows — Free</a>
-                <a href="https://chromewebstore.google.com/detail/pcmcaccnegefcjhdabjjfhaakjfeocea"
-                    class="btn btn-outline btn-lg">Add to Chrome</a>
+        <!-- ── p. 01 ───────────────────────────────────────────────────────── -->
+        <section id="night">
+            <div class="wrap reveal">
+                <p class="page-label">p. 01</p>
+                <h2>Does your night look like this?</h2>
+                <div class="notes">
+                    <div class="note note-y">
+                        <span class="pin" aria-hidden="true">
+                            <svg width="60" height="18" viewBox="0 0 84 22">
+                                <path d="M2 3 L82 1 L83 19 L1 21 Z" fill="#CFE2FF" fill-opacity="0.9" stroke="#fff"
+                                    stroke-opacity="0.6" />
+                            </svg>
+                        </span>
+                        opened Discord to check one message. 40 minutes.
+                    </div>
+                    <div class="note note-p">
+                        <span class="pin" aria-hidden="true">
+                            <svg width="18" height="44" viewBox="0 0 18 44">
+                                <path d="M13 10 V32 a4 4 0 0 1 -8 0 V8 a6 6 0 0 1 12 0 V34 a8 8 0 0 1 -16 0 V12"
+                                    fill="none" stroke="#5B7DB8" stroke-width="2.2" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        paused the blocker "just for 5 min".
+                    </div>
+                    <div class="note note-s">
+                        <span class="pin" aria-hidden="true">
+                            <svg width="34" height="34" viewBox="0 0 44 44">
+                                <g transform="translate(22 22)">
+                                    <g><ellipse cx="0" cy="-11" rx="7.5" ry="10" fill="#F6A5B7" /></g>
+                                    <g transform="rotate(72)"><ellipse cx="0" cy="-11" rx="7.5" ry="10" fill="#F6A5B7" />
+                                    </g>
+                                    <g transform="rotate(144)"><ellipse cx="0" cy="-11" rx="7.5" ry="10"
+                                            fill="#F6A5B7" /></g>
+                                    <g transform="rotate(216)"><ellipse cx="0" cy="-11" rx="7.5" ry="10"
+                                            fill="#F6A5B7" /></g>
+                                    <g transform="rotate(288)"><ellipse cx="0" cy="-11" rx="7.5" ry="10"
+                                            fill="#F6A5B7" /></g>
+                                    <circle r="6.5" fill="#F7C948" />
+                                    <circle r="6.5" fill="none" stroke="#2B3A55" stroke-width="1.4" />
+                                </g>
+                            </svg>
+                        </span>
+                        finals in 3 weeks. 6 hours of YouTube yesterday.
+                    </div>
+                </div>
             </div>
-            <p class="sys-req">Windows may show a security warning — click More info, then Run anyway.</p>
-            <p class="sys-req">Requires Windows 10/11 &bull; v1.2.7 (Stable) &bull; 5 MB</p>
-        </div>
-    </section>
+        </section>
+
+        <!-- ── p. 02 ───────────────────────────────────────────────────────── -->
+        <section id="how">
+            <div class="wrap reveal">
+                <p class="page-label">p. 02</p>
+                <h2>What happens when you press Start</h2>
+                <div class="steps">
+                    <div>
+                        <div class="step-n">1</div>
+                        <h3>Pick a session.</h3>
+                        <p class="small">25, 45, 60 or 90 minutes. Anything 45 and over needs a two-second hold, so you
+                            never start a long one by accident.</p>
+                        <div class="shot"><img src="shot-session.png" width="416" height="470" loading="lazy"
+                                alt="The Lock-In session card with 25, 45, 60 and 90 minute presets."></div>
+                    </div>
+                    <div>
+                        <div class="step-n">2</div>
+                        <h3>Everything on your list dies every two seconds.</h3>
+                        <p class="small">Close Lock-In and open it again and the session is still running — it picks up
+                            where it left off and keeps going until the time you set.</p>
+                        <div class="shot"><img src="shot-blocks.png" width="680" height="510" loading="lazy"
+                                alt="The blocked apps list in Lock-In, showing blocked executables."></div>
+                    </div>
+                    <div>
+                        <div class="step-n">3</div>
+                        <h3>Your Chrome tabs hit a wall.</h3>
+                        <p class="small">The extension redirects blocked sites to a dead end for as long as the session
+                            lasts.</p>
+                        <div class="shot"><img src="shot-sites.png" width="470" height="310" loading="lazy"
+                                alt="The blocked websites list in Lock-In."></div>
+                    </div>
+                </div>
+                <p class="small muted" style="margin-top:22px">Site blocking needs a connection; app blocking works
+                    offline.</p>
+            </div>
+        </section>
+
+        <!-- ── p. 03 ───────────────────────────────────────────────────────── -->
+        <section id="exit">
+            <div class="wrap reveal">
+                <p class="page-label">p. 03</p>
+                <h2>Yes, there's a way out.<br>It costs you the session.</h2>
+                <p class="lede" style="margin-top:18px">Hold Bail out for two seconds. That starts a five-minute fuse —
+                    it doesn't stop anything. Your apps keep dying for those five minutes. When the fuse runs out the
+                    session ends and counts as zero: no minutes, no streak, however far in you were. You get one
+                    bail-out a day. Quitting the app doesn't speed it up; the fuse is on disk and still counting when you
+                    come back.</p>
+
+                <div class="timeline">
+                    <div class="tl"><b>0:00</b><span>hold Bail out for 2 seconds</span></div>
+                    <div class="tl"><b>fuse counting</b><span>blocking continues — nothing changes</span></div>
+                    <div class="tl tl-end"><b>5:00 unlocked</b><span>session = 0 min</span></div>
+                </div>
+
+                <p class="muted" style="margin-top:20px">Not a punishment. A speed bump big enough that you'll finish
+                    instead.</p>
+            </div>
+        </section>
+
+        <!-- ── p. 04 ───────────────────────────────────────────────────────── -->
+        <section id="pack">
+            <div class="wrap reveal">
+                <p class="page-label">p. 04</p>
+                <h2>The Pack</h2>
+                <p class="lede" style="margin-top:16px">Add a friend by handle and you'll see when they're in a session
+                    and how long their streak is. They see yours.</p>
+                <div style="display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap;margin-top:28px">
+                    <div class="note note-m" style="max-width:300px">add a friend by handle. that's the whole feature.
+                    </div>
+                    <p class="muted" style="max-width:36ch;padding-top:10px">No feed, no likes, no leaderboard shouting
+                        at you.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── p. 05 ───────────────────────────────────────────────────────── -->
+        <section id="looks">
+            <div class="wrap reveal">
+                <p class="page-label">p. 05</p>
+                <h2>Four looks</h2>
+                <div class="looks">
+                    <div>
+                        <div class="shot"><img src="look-operator.png" width="820" height="560" loading="lazy"
+                                alt="Lock-In in the Operator theme."></div>
+                        <div class="look-name">Operator</div>
+                    </div>
+                    <div>
+                        <div class="shot"><img src="look-notebook.png" width="820" height="560" loading="lazy"
+                                alt="Lock-In in the Notebook theme."></div>
+                        <div class="look-name">Notebook</div>
+                    </div>
+                    <div>
+                        <div class="shot"><img src="look-bento.png" width="820" height="560" loading="lazy"
+                                alt="Lock-In in the Bento theme."></div>
+                        <div class="look-name">Bento</div>
+                    </div>
+                    <div>
+                        <div class="shot"><img src="look-botanical.png" width="820" height="560" loading="lazy"
+                                alt="Lock-In in the Botanical theme."></div>
+                        <div class="look-name">Botanical</div>
+                    </div>
+                </div>
+                <p class="muted" style="margin-top:20px">Same enforcer underneath.</p>
+            </div>
+        </section>
+
+        <!-- ── p. 06 ───────────────────────────────────────────────────────── -->
+        <section id="fit">
+            <div class="wrap reveal">
+                <p class="page-label">p. 06</p>
+                <h2>What it isn't</h2>
+                <div class="fit">
+                    <div class="note note-m">
+                        <h3>For you if…</h3>
+                        <ul>
+                            <li>you're on a Windows laptop</li>
+                            <li>you already know your three worst apps</li>
+                            <li>you've got exams coming</li>
+                        </ul>
+                    </div>
+                    <div class="note note-p">
+                        <h3>Not for you if…</h3>
+                        <ul>
+                            <li>you're on a Mac or a phone</li>
+                            <li>you want a blocker that asks "are you sure?"</li>
+                            <li>you need to pause halfway</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── p. 07 ───────────────────────────────────────────────────────── -->
+        <section id="install">
+            <div class="wrap reveal">
+                <p class="page-label">p. 07</p>
+                <h2>The install, honestly</h2>
+                <p class="lede" style="margin-top:16px">Windows will say "Windows protected your PC". Click
+                    <b>More info</b>, then <b>Run anyway</b>.</p>
+                <!--SMARTSCREEN-->
+                <p class="muted">Unsigned because a code-signing certificate costs about US$400. It's coming.</p>
+                <div class="hero-buttons">
+                    <a class="btn btn-primary"
+                        href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
+                        download>Download the installer — 5 MB</a>
+                    <a class="btn"
+                        href="https://chromewebstore.google.com/detail/pcmcaccnegefcjhdabjjfhaakjfeocea" rel="noopener">Get
+                        the Chrome extension</a>
+                </div>
+                <p class="small muted">No admin rights? <a
+                        href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64-setup.exe"
+                        download>Get the portable installer</a> instead.</p>
+            </div>
+        </section>
+
+        <!-- ── p. 08 ───────────────────────────────────────────────────────── -->
+        <section id="who">
+            <div class="wrap reveal">
+                <p class="page-label">p. 08</p>
+                <h2>Who built this</h2>
+                <p class="lede" style="margin-top:16px">I'm Cayden, 19, at Ngee Ann Poly. I built this for my own
+                    finals, after I restarted my laptop to get around my own blocker and spent the night on YouTube
+                    anyway. If it breaks, email me: <a href="mailto:caydencmy@gmail.com">caydencmy@gmail.com</a></p>
+            </div>
+        </section>
+
+        <!-- ── FAQ ─────────────────────────────────────────────────────────── -->
+        <section id="faq">
+            <div class="wrap reveal">
+                <p class="page-label">p. 09</p>
+                <h2>Questions</h2>
+                <div class="faq">
+                    <details>
+                        <summary>Can I quit or uninstall it mid-session?</summary>
+                        <p>Yes. It's an ordinary Windows app — End task or uninstall will stop it, and it doesn't fight
+                            you. What it won't do is let you pause or shorten a session from inside the app, and if you
+                            close it and open it again, the session is still running.</p>
+                    </details>
+                    <details>
+                        <summary>Does it work offline?</summary>
+                        <p>App blocking, yes — completely. Site blocking, no: the Chrome extension needs a connection to
+                            know a session is running. The app itself opens and runs offline; your dashboard, streak and
+                            blocklist are stored on your computer.</p>
+                    </details>
+                    <details>
+                        <summary>What does it collect?</summary>
+                        <p>No analytics, no tracking. Your email and handle, your blocklist, and how many minutes you've
+                            focused so the streak works. Nothing about which sites you visit leaves your machine. The
+                            details are in the <a href="/privacy">privacy policy</a>.</p>
+                    </details>
+                    <details>
+                        <summary>Is there a Mac or phone version?</summary>
+                        <p>No. Windows 10 and 11 only.</p>
+                    </details>
+                    <details>
+                        <summary>What if I lock 90 minutes by accident?</summary>
+                        <p>Bail out — hold two seconds, wait five minutes, the session voids. That's also why 45 minutes
+                            and up need a two-second hold to start.</p>
+                    </details>
+                    <details>
+                        <summary>Why does Windows warn me about it?</summary>
+                        <p>The installer isn't code-signed. SmartScreen flags anything it hasn't seen before. More info →
+                            Run anyway.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Download ────────────────────────────────────────────────────── -->
+        <section id="download">
+            <div class="wrap cta reveal">
+                <h2>Free. 5 MB. Windows 10/11.</h2>
+                <div><a class="btn btn-primary"
+                        href="https://github.com/tufflord11111/lock-in/releases/download/v1.2.7/Lock-In_1.2.7_x64_en-US.msi"
+                        download>Download for Windows</a></div>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <div class="container footer-content">
-            <div class="footer-logo">LOCK-IN</div>
-            <div class="footer-links">
-                <a href="https://github.com/tufflord11111/Lockin-website">GitHub</a>
-                <a href="/privacy">Privacy Policy</a>
-                <a href="mailto:caydencmy@gmail.com">Contact</a>
-            </div>
-            <div class="footer-links" style="color: rgba(250, 250, 248, 0.5); font-size: 0.9rem;">
-                &copy; 2026 Lock-In App. All rights reserved.
-            </div>
-        </div>
+        <div class="wrap">© 2026 Cayden Chai · Singapore · <a href="/privacy">/privacy</a></div>
     </footer>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
+    <script src="motion.js" defer></script>
+    <script defer>
+        (function () {
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
+            /* ── Ticker content ───────────────────────────────────────────── */
+            var TICK = [
+                ['Discord.exe', 'killed'], ['youtube.com', 'denied'], ['Steam.exe', 'killed'],
+                ['tiktok.com', 'denied'], ['LeagueClient.exe', 'killed'], ['reddit.com', 'denied'],
+                ['Spotify.exe', 'killed'], ['twitch.tv', 'denied']
+            ];
+            var track = document.getElementById('ticker');
+            if (track) {
+                var html = TICK.map(function (t) {
+                    return '<div class="ticker-item"><b>' + t[0] + '</b> · ' + t[1] + '</div>';
+                }).join('');
+                track.innerHTML = html + html;   /* duplicated for a seamless -50% loop */
+            }
 
-            document.querySelectorAll('.fade-in').forEach(element => {
-                observer.observe(element);
-            });
+            /* ── Timer ────────────────────────────────────────────────────── */
+            var timerEl = document.getElementById('timer');
+            var endAt = Date.now() + 25 * 60 * 1000;
+            function tick() {
+                if (!timerEl) return;
+                var left = Math.max(0, endAt - Date.now());
+                var m = Math.floor(left / 60000), s = Math.floor(left / 1000) % 60;
+                timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+            }
+            tick();
+            setInterval(tick, 1000);
 
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    const href = this.getAttribute('href');
-                    if (href.startsWith('#') && href.length > 1) {
-                        e.preventDefault();
-                        const target = document.querySelector(href);
-                        if (target) {
-                            target.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        // Invite banner logic
-        (function() {
-            const params = new URLSearchParams(window.location.search);
-            const uid = params.get('uid') || params.get('code');
-            
-            if (!uid) return; // No uid — hide banner
-            
-            // Show banner
-            const banner = document.getElementById('inviteBanner');
-            if (banner) banner.style.display = 'flex';
-            
-            // Set uid display
-            const uidEl = document.getElementById('bannerUid');
-            if (uidEl) uidEl.textContent = uid;
-            
-            // Set banner text
-            const textEl = document.getElementById('bannerText');
-            if (textEl) textEl.textContent = "You've been invited — download Lock-In below";
-            
-            // Store uid for copy function
-            window._inviteUid = uid;
-            
-            // Also scroll smoothly to download section
-            // after a short delay so user sees the banner
-            setTimeout(() => {
-                const downloadSection = document.getElementById('download');
-                if (downloadSection) {
-                    downloadSection.scrollIntoView({ behavior: 'smooth' });
+            /* ── Kill feed ────────────────────────────────────────────────── */
+            /* Kills accumulate rather than resetting one at a time: at almost
+               any moment the card shows several struck-through rows, so the
+               mechanic reads in a glance instead of needing to be watched. */
+            var rows = Array.prototype.slice.call(document.querySelectorAll('#rows .row'));
+            var denied = document.getElementById('denied');
+            var order = [0, 2, 1, 4, 3];      /* not top-to-bottom — less mechanical */
+            var step = 0;
+
+            function setRow(row, state, text) {
+                row.classList.remove('open', 'killed');
+                if (state) row.classList.add(state);
+                row.querySelector('.state').textContent = text;
+            }
+
+            function resetAll() {
+                rows.forEach(function (r) { setRow(r, null, 'on your list'); });
+                if (denied) denied.classList.remove('show');
+            }
+
+            function cycle() {
+                if (step >= order.length) {          /* all dead — brief beat, then again */
+                    step = 0;
+                    setTimeout(resetAll, 900);
+                    return;
                 }
-            }, 1500);
+                var row = rows[order[step]];
+                step++;
+                if (!row) return;
+
+                setRow(row, 'open', 'opened');
+
+                setTimeout(function () {
+                    setRow(row, 'killed', row.dataset.site ? 'denied · 0.8 s' : 'killed · 0.8 s');
+                    if (row.dataset.site && denied) denied.classList.add('show');
+                }, 800);
+            }
+
+            if (reduce) {
+                /* Final state, no loop: everything struck through, wall shown. */
+                rows.forEach(function (r) {
+                    setRow(r, 'killed', r.dataset.site ? 'denied · 0.8 s' : 'killed · 0.8 s');
+                });
+                if (denied) denied.classList.add('show');
+            } else {
+                cycle();
+                setInterval(cycle, 1700);
+            }
+
+            /* ── Section reveal — page turn ───────────────────────────────── */
+            var M = window.Motion;
+            var targets = document.querySelectorAll('.reveal');
+            if (reduce || !M || !M.inView || !M.animate) {
+                Array.prototype.forEach.call(targets, function (el) { el.classList.add('is-in'); });
+                return;
+            }
+
+            M.inView(targets, function (entry) {
+                var el = entry.target;
+                /* Motion will not interpolate a transform string, so tween a
+                   number and build the transform in onUpdate. */
+                M.animate(0, 1, {
+                    duration: 0.62,
+                    easing: [0.22, 0.61, 0.36, 1],
+                    onUpdate: function (v) {
+                        el.style.opacity = String(v);
+                        el.style.transform =
+                            'perspective(1200px) rotateX(' + (6 * (1 - v)) + 'deg) translateY(' + (18 * (1 - v)) + 'px)';
+                    },
+                    onComplete: function () { el.style.transform = ''; el.classList.add('is-in'); }
+                });
+            }, { amount: 0.15 });
         })();
-
-        function copyInviteCode() {
-            const uid = window._inviteUid;
-            if (!uid) return;
-            
-            navigator.clipboard.writeText(uid).then(() => {
-                const btn = document.getElementById('bannerCopyBtn');
-                if (btn) {
-                    btn.textContent = '✓ COPIED!';
-                    btn.style.background = '#FAFAF8';
-                    setTimeout(() => {
-                        btn.textContent = 'COPY CODE';
-                        btn.style.background = '#F5C842';
-                    }, 2000);
-                }
-            });
-        }
     </script>
 </body>
 
