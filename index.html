@@ -36,6 +36,13 @@
             href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,100..900&family=Patrick+Hand&display=swap">
     </noscript>
 
+    <!-- Without JS nothing adds .is-in, so the reveal would hide the page. -->
+    <noscript>
+        <style>
+            .reveal { opacity: 1 !important; }
+        </style>
+    </noscript>
+
     <style>
         /* ── Tokens — the app's Notebook theme, on paper ────────────────────── */
         :root {
@@ -52,7 +59,7 @@
             --wood1: #C08A52;
             --wood2: #8A5E35;
             --rule: rgba(43, 58, 85, 0.16);
-            --grid: rgba(106, 155, 216, 0.22);
+            --grid: rgba(106, 155, 216, 0.09);
             --grid-size: 28px;
 
             --radius: 4px;
@@ -70,7 +77,7 @@
                 --ink: #EDF2FA;
                 --ink-soft: #A9BEDC;
                 --rule: rgba(237, 242, 250, 0.18);
-                --grid: rgba(169, 190, 220, 0.14);
+                --grid: rgba(70, 88, 124, 0.10);
                 --yellow-pale: #3A3524;
                 --wood1: #8A5E35;
                 --wood2: #5C3B20;
@@ -83,7 +90,7 @@
             --ink: #EDF2FA;
             --ink-soft: #A9BEDC;
             --rule: rgba(237, 242, 250, 0.18);
-            --grid: rgba(169, 190, 220, 0.14);
+            --grid: rgba(70, 88, 124, 0.10);
             --yellow-pale: #3A3524;
             --wood1: #8A5E35;
             --wood2: #5C3B20;
@@ -263,6 +270,7 @@
         @media (max-width: 899px) {
             .feed-wrap { padding-bottom: 0; }
             .note-taped { position: static; width: auto; margin: 26px auto 0; transform: rotate(-1deg); }
+            .note-taped:hover, .note-taped:focus-within { transform: rotate(-1deg) translateY(-2px); }
         }
 
         .tape {
@@ -293,12 +301,47 @@
             padding: 30px 20px 26px;
             box-shadow: 0 6px 16px rgba(20, 40, 80, 0.13);
         }
-        .note-y { background: var(--yellow); transform: rotate(-1.4deg); }
-        .note-p { background: var(--pink); transform: rotate(1.1deg); }
-        .note-s { background: var(--sky); transform: rotate(-0.6deg); }
-        .note-m { background: var(--mint); transform: rotate(0.8deg); }
+        .note-y { --rot: -1.4deg; --under: #E8BC3E; background: var(--yellow); }
+        .note-p { --rot: 1.1deg; --under: #E89AAB; background: var(--pink); }
+        .note-s { --rot: -0.6deg; --under: #BED3F2; background: var(--sky); }
+        .note-m { --rot: 0.8deg; --under: #AEDCC4; background: var(--mint); }
+        .note { transform: rotate(var(--rot, 0deg)); }
 
         .pin { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
+
+        /* ── Peel ───────────────────────────────────────────
+           The note lifts off the page and its bottom-right corner turns up.
+           The pin is pushed back by the same amount so it stays stuck in the
+           board while the paper moves under it. */
+        .note::after, .note-taped::after {
+            content: ""; position: absolute; right: 0; bottom: 0;
+            width: 0; height: 0; pointer-events: none;
+            /* The flap is the triangle below the fold; it is lightest at the
+               free corner, where the paper lifts furthest off the page. The
+               shadow has to be a filter, because clip-path would cut a
+               box-shadow away with the rest of the box. */
+            background: linear-gradient(135deg, var(--under, #E8BC3E) 0%, #FFFFFF 92%);
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+            filter: drop-shadow(-3px -3px 4px rgba(20, 40, 80, 0.3));
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .note, .note-taped { transition: transform .24s ease, box-shadow .24s ease; }
+            .note::after, .note-taped::after { transition: width .24s ease, height .24s ease; }
+            .pin, .tape { transition: transform .24s ease; }
+
+            .note:hover, .note:focus-within { transform: rotate(var(--rot, 0deg)) translateY(-2px); }
+            .note-taped:hover, .note-taped:focus-within { transform: rotate(2.4deg) translateY(-2px); }
+            .note:hover, .note:focus-within,
+            .note-taped:hover, .note-taped:focus-within { box-shadow: 0 10px 20px rgba(20, 40, 80, 0.2); }
+
+            .note:hover::after, .note:focus-within::after,
+            .note-taped:hover::after, .note-taped:focus-within::after { width: 30px; height: 30px; }
+
+            /* Tape and pins do not move with the paper. */
+            .note:hover .pin, .note:focus-within .pin { transform: translateX(-50%) translateY(2px); }
+            .feed:hover .tape { transform: translateX(-50%) rotate(-3deg); }
+        }
 
         /* ── Steps ──────────────────────────────────────────────────────────── */
         .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
@@ -320,7 +363,15 @@
         .looks .shot img { aspect-ratio: 41 / 28; object-fit: cover; }
 
         /* ── Timeline ───────────────────────────────────────────────────────── */
-        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 34px 0 10px; border: var(--border) solid var(--ink); border-radius: var(--radius); overflow: hidden; }
+        .timeline-wrap { margin: 34px 0 10px; }
+        .fuse {
+            height: 9px; margin-bottom: 10px; overflow: hidden;
+            background: var(--paper-card);
+            border: var(--border) solid var(--ink); border-radius: var(--radius);
+        }
+        .fuse i { display: block; height: 100%; width: 100%; background: var(--yellow);
+                  transform: scaleX(0); transform-origin: left center; }
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 0; border: var(--border) solid var(--ink); border-radius: var(--radius); overflow: hidden; }
         .timeline > * { min-width: 0; }
         .tl {
             padding: 18px 16px; border-right: 1.5px solid var(--rule);
@@ -521,6 +572,69 @@
             .open-book .pg.r { padding-top: 0; }
             .open-book .l .pnum { display: none; }
         }
+
+        /* ── Add-your-own row ─────────────────────────────── */
+        .add { margin-top: 16px; }
+        .add-label {
+            display: block; font-family: var(--font-hand); font-size: 1.05rem;
+            color: var(--ink-soft); margin-bottom: 7px;
+        }
+        .add-bar { display: flex; gap: 8px; }
+        .add input {
+            flex: 1 1 auto; min-width: 0;
+            font-family: var(--font); font-size: 0.93rem; font-weight: 700;
+            color: var(--ink); background: var(--paper-card);
+            border: 1.5px solid var(--rule); border-radius: var(--radius);
+            padding: 10px 11px;
+        }
+        .add input::placeholder { color: var(--ink-soft); font-weight: 600; }
+        .add input:focus-visible, .add button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+        .add input:disabled { opacity: 1; color: var(--ink-soft); }
+        .add button {
+            flex: 0 0 auto; cursor: pointer;
+            font-family: var(--font); font-size: 0.86rem; font-weight: 800;
+            color: var(--paper-card); background: var(--ink);
+            border: 1.5px solid var(--ink); border-radius: var(--radius);
+            padding: 10px 16px;
+        }
+        .add button:disabled { cursor: default; background: var(--ink-soft); border-color: var(--ink-soft); }
+        .add-hint { margin: 8px 0 0; font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); min-height: 1.1em; }
+
+        /* ── Ink underline ──────────────────────────────────── */
+        .h2-ink { position: relative; display: inline-block; }
+        .ink-ul {
+            position: absolute; left: 0; bottom: -0.3em;
+            width: 100%; height: 12px; overflow: visible; pointer-events: none;
+        }
+        .ink-ul path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+
+        /* ── Sticky CTA (narrow screens) ───────────────────────── */
+        .sticky-cta { display: none; }
+
+        @media (max-width: 719px) {
+            .sticky-cta {
+                display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+                text-align: center; text-decoration: none;
+                font-family: var(--font); font-size: 0.95rem; font-weight: 800;
+                color: #2B3A55; background: var(--yellow);
+                border-top: var(--border) solid var(--ink);
+                padding: 15px 16px calc(15px + env(safe-area-inset-bottom, 0px));
+                transform: translateY(110%);
+            }
+            .sticky-cta.show { transform: translateY(0); }
+            @media (prefers-reduced-motion: no-preference) {
+                .sticky-cta { transition: transform .28s cubic-bezier(0.2, 0.9, 0.3, 1); }
+            }
+            /* Keep the end of the page reachable from under the bar, so the
+               last FAQ toggle is never stuck behind it. */
+            body.has-cta { padding-bottom: 84px; }
+            html { scroll-padding-bottom: 84px; }
+        }
+
+        /* ── Dark-mode polish ────────────────────────────────── */
+        /* A sticker's die-cut edge is the colour of the page it was cut from,
+           so on a dark page it must not stay white. */
+        .tape svg path[stroke="#fff"], .pin svg path[stroke="#fff"] { stroke: var(--paper); }
     </style>
 </head>
 
@@ -599,6 +713,16 @@
                         <div class="denied-card" id="denied">ACCESS DENIED<small>youtube.com — blocked for this
                                 session</small></div>
                     </div>
+
+                    <form class="add" id="add" novalidate>
+                        <label class="add-label" for="addInput">go on, add your worst one.</label>
+                        <div class="add-bar">
+                            <input id="addInput" type="text" placeholder="e.g. valorant.exe" maxlength="24"
+                                autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
+                            <button type="submit">Add</button>
+                        </div>
+                        <p class="add-hint" id="addHint" role="status" aria-live="polite"></p>
+                    </form>
 
                     <div class="note-taped">restarted my laptop to get past my blocker. still on YouTube.<br>— me, 2am
                     </div>
@@ -706,10 +830,13 @@
                     bail-out a day. Quitting the app doesn't speed it up; the fuse is on disk and still counting when you
                     come back.</p>
 
-                <div class="timeline">
+                <div class="timeline-wrap">
+                    <div class="fuse" aria-hidden="true"><i></i></div>
+                    <div class="timeline">
                     <div class="tl"><b>0:00</b><span>hold Bail out for 2 seconds</span></div>
                     <div class="tl"><b>fuse counting</b><span>blocking continues — nothing changes</span></div>
                     <div class="tl tl-end"><b>5:00 unlocked</b><span>session = 0 min</span></div>
+                    </div>
                 </div>
 
                 <p class="muted" style="margin-top:20px">Not a punishment. A speed bump big enough that you'll finish
@@ -1055,13 +1182,21 @@
         </section>
     </main>
 
+    <a class="sticky-cta" id="stickyCta" href="#download">Download free · 5 MB</a>
+
     <footer>
         <div class="wrap">© 2026 Lock-In · Made in Singapore · <a href="/privacy">Privacy</a></div>
     </footer>
 
     <script src="motion.js" defer></script>
     <script defer>
+        /* `defer` is ignored on an inline script, so this block runs while the
+           document is still parsing — before the deferred motion.js has
+           executed, which left window.Motion undefined and quietly sent every
+           animation down its no-Motion fallback. DOMContentLoaded is
+           guaranteed to fire after deferred scripts have run. */
         (function () {
+            var start = function () {
             var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             /* ── Ticker content ───────────────────────────────────────────── */
@@ -1139,6 +1274,190 @@
                 setInterval(cycle, 1700);
             }
 
+            /* Fuse — observe the wrapper, not the bar: the fill is a clipped
+               child of an overflow:hidden box and would never trip inView. */
+            var fuseWrap = document.querySelector('.timeline-wrap');
+            var fuseFill = fuseWrap && fuseWrap.querySelector('.fuse i');
+            var tlEnd = fuseWrap && fuseWrap.querySelector('.tl-end');
+            if (fuseWrap && fuseFill && tlEnd) {
+                var MF = window.Motion;
+                if (reduce || !MF || !MF.inView || !MF.animate) {
+                    fuseFill.style.transform = 'scaleX(1)';
+                } else {
+                    tlEnd.style.opacity = '0';
+                    tlEnd.style.transform = 'scale(0.92)';
+                    var lit = false;
+                    MF.inView(fuseWrap, function () {
+                        if (lit) return;
+                        lit = true;
+                        MF.animate(0, 1, {
+                            duration: 1.5, easing: 'linear',
+                            onUpdate: function (v) { fuseFill.style.transform = 'scaleX(' + v + ')'; },
+                            onComplete: function () {
+                                MF.animate(0, 1, {
+                                    duration: 0.42, easing: [0.2, 1.5, 0.4, 1],
+                                    onUpdate: function (v) {
+                                        tlEnd.style.opacity = String(v);
+                                        tlEnd.style.transform = 'scale(' + (0.92 + 0.08 * v) + ')';
+                                    },
+                                    onComplete: function () { tlEnd.style.opacity = ''; tlEnd.style.transform = ''; }
+                                });
+                            }
+                        });
+                    }, { amount: 0.3 });
+                }
+            }
+
+            /* ── Sticky CTA ─────────────────────────────────────
+               Up once the hero has gone, down again over the download block
+               so it never sits on top of the button it duplicates. */
+            var cta = document.getElementById('stickyCta');
+            var hero = document.querySelector('.hero');
+            var dl = document.getElementById('download');
+            if (cta && hero && dl && window.IntersectionObserver) {
+                var heroOut = false, dlIn = false;
+                var sync = function () {
+                    var show = heroOut && !dlIn;
+                    cta.classList.toggle('show', show);
+                    document.body.classList.toggle('has-cta', show);
+                };
+                new IntersectionObserver(function (es) {
+                    heroOut = !es[0].isIntersecting; sync();
+                }, { threshold: 0 }).observe(hero);
+                new IntersectionObserver(function (es) {
+                    dlIn = es[0].isIntersecting; sync();
+                }, { threshold: 0 }).observe(dl);
+            }
+
+            /* ── Ink underline ─────────────────────────────────
+               The viewBox is sized to the heading's measured width, so the
+               drawing scale stays 1:1 — stroke-width is then exactly 2px and
+               getTotalLength() is in the same units as the dash. */
+            var NS = 'http://www.w3.org/2000/svg';
+            var inks = [];
+
+            var inkPath = function (w) {
+                var y = 6, amp = 2.3;
+                var n = Math.max(2, Math.round(w / 170));
+                var step = (w - 4) / n;
+                var d = 'M2 ' + (y + 0.4).toFixed(2);
+                for (var i = 0; i < n; i++) {
+                    var x0 = 2 + step * i, x1 = 2 + step * (i + 1), dir = i % 2 ? 1 : -1;
+                    d += ' C ' + (x0 + step * 0.35).toFixed(1) + ' ' + (y + dir * amp).toFixed(2)
+                       + ', ' + (x0 + step * 0.68).toFixed(1) + ' ' + (y - dir * amp * 0.72).toFixed(2)
+                       + ', ' + x1.toFixed(1) + ' ' + (y + dir * amp * 0.28).toFixed(2);
+                }
+                return d;
+            };
+
+            var sizeInk = function (o, keepDrawn) {
+                var w = Math.round(o.span.offsetWidth);
+                if (!w) return;
+                o.svg.setAttribute('viewBox', '0 0 ' + w + ' 12');
+                o.path.setAttribute('d', inkPath(w));
+                var len = o.path.getTotalLength();
+                o.len = len;
+                o.path.style.strokeDasharray = len;
+                o.path.style.strokeDashoffset = (keepDrawn && o.drawn) ? '0' : String(len);
+            };
+
+            Array.prototype.forEach.call(document.querySelectorAll('main section h2'), function (h2) {
+                var span = document.createElement('span');
+                span.className = 'h2-ink';
+                while (h2.firstChild) span.appendChild(h2.firstChild);
+                h2.appendChild(span);
+
+                var svg = document.createElementNS(NS, 'svg');
+                svg.setAttribute('class', 'ink-ul');
+                svg.setAttribute('preserveAspectRatio', 'none');
+                svg.setAttribute('aria-hidden', 'true');
+                var path = document.createElementNS(NS, 'path');
+                svg.appendChild(path);
+                span.appendChild(svg);
+
+                var o = { span: span, svg: svg, path: path, drawn: false, section: h2.closest('section') || h2 };
+                sizeInk(o);
+                inks.push(o);
+            });
+
+            if (reduce || !window.Motion || !window.Motion.inView) {
+                inks.forEach(function (o) { o.drawn = true; o.path.style.strokeDashoffset = '0'; });
+            } else {
+                inks.forEach(function (o) {
+                    /* Watch the section, not the heading: the svg is a clipped
+                       child and would not reliably trip the observer. */
+                    window.Motion.inView(o.section, function () {
+                        if (o.drawn) return;
+                        o.drawn = true;
+                        window.Motion.animate(o.len, 0, {
+                            duration: 0.72, delay: 0.14, easing: [0.4, 0.1, 0.25, 1],
+                            onUpdate: function (v) { o.path.style.strokeDashoffset = String(v); }
+                        });
+                    }, { amount: 0.12 });
+                });
+            }
+
+            var inkTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(inkTimer);
+                inkTimer = setTimeout(function () { inks.forEach(function (o) { sizeInk(o, true); }); }, 160);
+            });
+
+            /* ── Add your own row ───────────────────────────────
+               Nothing here is stored or sent anywhere — the row is built in
+               the DOM and forgotten on reload. */
+            var addForm = document.getElementById('add');
+            if (addForm) {
+                var addInput = document.getElementById('addInput');
+                var addBtn = addForm.querySelector('button');
+                var addHint = document.getElementById('addHint');
+                var rowList = document.getElementById('rows');
+                var MAX_ADDED = 3;
+                var added = 0;
+
+                var clean = function (raw) {
+                    /* Whitelist, then cap. The value only ever reaches the page
+                       through textContent, so this is belt and braces. */
+                    return String(raw).replace(/[^A-Za-z0-9._\- ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
+                };
+
+                addForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    if (added >= MAX_ADDED) return;
+                    var name = clean(addInput.value);
+                    if (!name) { addHint.textContent = 'Type a name first, like discord.exe.'; return; }
+
+                    var isSite = /\.(com|tv|app)$/i.test(name);
+                    var li = document.createElement('li');
+                    li.className = 'row open';
+                    var dot = document.createElement('span'); dot.className = 'dot';
+                    var nm = document.createElement('span'); nm.className = 'name'; nm.textContent = name;
+                    var st = document.createElement('span'); st.className = 'state'; st.textContent = 'opened';
+                    li.appendChild(dot); li.appendChild(nm); li.appendChild(st);
+                    rowList.appendChild(li);
+
+                    added++;
+                    addInput.value = '';
+                    addHint.textContent = added >= MAX_ADDED
+                        ? 'That\u2019s three. You get the idea.'
+                        : name + ' added to the list.';
+                    if (added >= MAX_ADDED) { addInput.disabled = true; addBtn.disabled = true; }
+
+                    var finish = function () {
+                        li.classList.remove('open');
+                        li.classList.add('killed');
+                        st.textContent = isSite ? 'denied \u00b7 0.8 s' : 'killed \u00b7 0.8 s';
+                        if (isSite && denied) {
+                            var sm = denied.querySelector('small');
+                            if (sm) sm.textContent = name + ' \u2014 blocked for this session';
+                            denied.classList.add('show');
+                        }
+                    };
+                    /* Reduced motion gets the end of the story straight away. */
+                    if (reduce) finish(); else setTimeout(finish, 800);
+                });
+            }
+
             /* ── Bookshelf ─────────────────────────────────── */
             var books = Array.prototype.slice.call(document.querySelectorAll('.book'));
             if (books.length) {
@@ -1203,6 +1522,12 @@
                     onComplete: function () { el.style.transform = ''; el.classList.add('is-in'); }
                 });
             }, { amount: 0.15 });
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', start);
+            } else {
+                start();
+            }
         })();
     </script>
 </body>
