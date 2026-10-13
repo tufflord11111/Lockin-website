@@ -49,6 +49,8 @@
             --mint: #BFE8D2;
             --mint-ink: #0B5225;
             --sky: #CFE2FF;
+            --wood1: #C08A52;
+            --wood2: #8A5E35;
             --rule: rgba(43, 58, 85, 0.16);
             --grid: rgba(106, 155, 216, 0.22);
             --grid-size: 28px;
@@ -70,6 +72,8 @@
                 --rule: rgba(237, 242, 250, 0.18);
                 --grid: rgba(169, 190, 220, 0.14);
                 --yellow-pale: #3A3524;
+                --wood1: #8A5E35;
+                --wood2: #5C3B20;
             }
         }
 
@@ -80,6 +84,9 @@
             --ink-soft: #A9BEDC;
             --rule: rgba(237, 242, 250, 0.18);
             --grid: rgba(169, 190, 220, 0.14);
+            --yellow-pale: #3A3524;
+            --wood1: #8A5E35;
+            --wood2: #5C3B20;
         }
 
         /* ── Base ───────────────────────────────────────────────────────────── */
@@ -372,6 +379,148 @@
         }
 
         @media (max-width: 720px) { :root { --section-y: 64px; } .wrap { width: min(1120px, 100% - 32px); } }
+
+        /* ── Bookshelf ─────────────────────────────────────── */
+        /* Hug the spines so the plank does not run on past the last book. */
+        .shelf-box { position: relative; padding: 46px 0 34px; width: max-content; max-width: 100%; }
+
+        .shelf {
+            display: flex; align-items: flex-end; gap: 6px;
+            height: 252px; padding: 0 14px; margin: 0; list-style: none; position: relative;
+        }
+        .shelf > * { min-width: 0; }
+
+        /* The plank, plus its shadow on the paper. */
+        .shelf::after {
+            content: ""; position: absolute; left: -12px; right: -12px; bottom: -20px;
+            height: 18px; border-radius: 2px;
+            background: linear-gradient(var(--wood1), var(--wood2));
+            box-shadow: 0 12px 16px -10px rgba(20, 40, 80, 0.45);
+        }
+
+        .book {
+            --c: #2F5D7C; --h: 206px; --w: 50px; --lean: 0deg;
+            height: var(--h); width: var(--w); flex: 0 0 auto;
+            border: 0; padding: 0; cursor: pointer; position: relative;
+            background-color: var(--c); color: #F6F1E4;
+            border-radius: 3px 3px 1px 1px;
+            transform-origin: 50% 100%; transform: rotate(var(--lean));
+            /* Spine furniture: a highlight down the hinge, two bands near the
+               head and a publisher rule near the foot. */
+            background-image:
+                linear-gradient(90deg, rgba(0,0,0,0.24), rgba(255,255,255,0.09) 18%, transparent 40%, transparent 78%, rgba(0,0,0,0.26)),
+                linear-gradient(transparent 14px, rgba(255,255,255,0.34) 14px, rgba(255,255,255,0.34) 16px,
+                    transparent 16px, transparent 20px, rgba(255,255,255,0.34) 20px, rgba(255,255,255,0.34) 22px,
+                    transparent 22px, transparent calc(100% - 24px), rgba(0,0,0,0.26) calc(100% - 24px),
+                    rgba(0,0,0,0.26) calc(100% - 20px), transparent 0);
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+        }
+        .book .t {
+            position: absolute; inset: 30px 0 34px;
+            display: flex; align-items: center; justify-content: center;
+            writing-mode: vertical-rl; transform: rotate(180deg);
+            font-family: var(--font); font-weight: 700; font-size: 0.8rem; line-height: 1.1;
+            font-variation-settings: "wdth" 112; letter-spacing: 0.02em;
+            white-space: nowrap; overflow: hidden;
+        }
+        .book.light { color: #1F2733; }
+        .book.lean { transform-origin: 0 100%; margin-right: 24px; }
+
+        /* A Ten-Year-Series style band across the foot of the spine. */
+        .book .tys {
+            position: absolute; left: 0; right: 0; bottom: 10px;
+            background: #FBF8F0; color: #1F2733;
+            font-family: var(--font); font-style: normal; font-weight: 800;
+            font-size: 0.52rem; letter-spacing: 0.1em; text-align: center;
+            padding: 3px 0; border-top: 1px solid rgba(0,0,0,0.2); border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
+        .book .clip { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .book { transition: transform 0.34s cubic-bezier(0.2, 1.4, 0.4, 1), box-shadow 0.24s; }
+        }
+        /* Hover tilts it out a little; selected pulls it clear of the shelf. */
+        .book:hover { transform: translateY(-9px) rotate(calc(var(--lean) - 3deg)); }
+        .book[aria-selected="true"] {
+            transform: translateY(-30px) rotate(var(--lean));
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12), 0 18px 18px -12px rgba(20, 40, 80, 0.5);
+        }
+        .book:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+        .bookend {
+            width: 13px; height: 104px; flex: 0 0 auto; align-self: flex-end;
+            background: linear-gradient(90deg, #6B7180, #49505E);
+            border-radius: 2px 2px 0 0; margin-left: 8px;
+        }
+
+        .shelf-scribble {
+            /* Out to the right of the bookend, clear of both the heading and
+               the spines. Hidden when there is no room beside the shelf. */
+            position: absolute; left: 100%; margin-left: 18px; top: 128px; width: 168px;
+            font-family: var(--font-hand); font-size: 1.1rem; line-height: 1.3;
+            color: var(--ink); transform: rotate(-4deg); pointer-events: none;
+        }
+
+        /* The open book */
+        .open-book {
+            display: grid; grid-template-columns: 1fr 1fr;
+            margin-top: 40px; position: relative; min-height: 300px;
+            background: var(--paper-card); color: var(--ink);
+            border: var(--border) solid var(--ink); border-radius: 6px 6px 8px 8px;
+            box-shadow: 0 18px 26px -18px rgba(20, 40, 80, 0.45);
+        }
+        .open-book[hidden] { display: none; }
+        /* The gutter where the two pages meet. */
+        .open-book::before {
+            content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
+            width: 38px; margin-left: -19px; pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(43,58,85,0.07) 45%,
+                rgba(43,58,85,0.12) 50%, rgba(43,58,85,0.07) 55%, transparent);
+        }
+        .open-book .pg { padding: 28px 28px 42px; position: relative; transform-origin: 0 50%; }
+        .open-book .pg.l { border-left: 7px solid var(--c, #2F5D7C); border-radius: 4px 0 0 6px; }
+        .open-book .kick {
+            font-family: var(--font-hand); font-size: 1.05rem; color: var(--ink-soft); margin: 0 0 6px;
+        }
+        .open-book h3 {
+            margin: 0 0 14px; font-size: 1.5rem; line-height: 1.15;
+            font-weight: 800; font-variation-settings: "wdth" 112; letter-spacing: -0.02em;
+        }
+        .open-book .len { font-size: 1.05rem; font-weight: 700; margin: 0 0 14px; }
+        .open-book dl { margin: 0; font-size: 0.95rem; }
+        .open-book dt {
+            font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px;
+        }
+        .open-book dd { margin: 0 0 14px; }
+        .open-book .hand {
+            font-family: var(--font-hand); font-size: 1.16rem; line-height: 1.4;
+            background: var(--yellow); color: #2B3A55;
+            padding: 16px 16px 14px; transform: rotate(-1deg);
+            box-shadow: 0 6px 16px rgba(20, 40, 80, 0.14);
+        }
+        .open-book .go { display: inline-block; margin-top: 18px; font-weight: 700; color: var(--ink); }
+        .open-book .pnum { position: absolute; bottom: 14px; font-size: 0.72rem; color: var(--ink-soft); }
+        .open-book .l .pnum { left: 28px; }
+        .open-book .r .pnum { right: 28px; }
+
+        @media (max-width: 1000px) { .shelf-scribble { display: none; } }
+
+        @media (max-width: 720px) {
+            .shelf { gap: 3px; height: 212px; padding: 0 4px; }
+            .book { width: 32px; height: calc(var(--h) - 36px); }
+            .book .t { font-size: 0.72rem; inset: 22px 0 30px; }
+            .book .tys { font-size: 0.44rem; letter-spacing: 0.04em; }
+            .book.lean { margin-right: 13px; }
+            .bookend { display: none; }
+        }
+        @media (max-width: 640px) {
+            .open-book { grid-template-columns: 1fr; border-left: 7px solid var(--c, #2F5D7C); }
+            .open-book::before { display: none; }
+            .open-book .pg.l { border-left: 0; }
+            .open-book .pg.r { padding-top: 0; }
+            .open-book .l .pnum { display: none; }
+        }
     </style>
 </head>
 
@@ -615,10 +764,184 @@
             </div>
         </section>
 
-        <!-- ── p. 06 ───────────────────────────────────────────────────────── -->
-        <section id="fit">
+        <!-- ── p. 06 ──────────────────────────────────────────────── -->
+        <section id="study">
             <div class="wrap reveal">
                 <p class="page-label">p. 06</p>
+                <h2>What are you studying tonight?</h2>
+                <div class="shelf-box">
+                    <p class="shelf-scribble">exam in 3 wks!!</p>
+                    <div class="shelf" role="tablist" aria-label="Pick a subject">
+                    <button class="book" role="tab" id="bk-1" aria-controls="bp-1" aria-selected="true" tabindex="0" style="--c:#2F5D7C;--h:212px;--w:52px"><span class="t">Chemistry</span><i class="tys">TYS</i></button>
+                    <button class="book" role="tab" id="bk-2" aria-controls="bp-2" aria-selected="false" tabindex="-1" style="--c:#8C3B2E;--h:232px;--w:46px"><span class="t">History</span></button>
+                    <button class="book light" role="tab" id="bk-3" aria-controls="bp-3" aria-selected="false" tabindex="-1" style="--c:#E4B53A;--h:196px;--w:56px"><span class="t">Maths</span><i class="tys">TYS</i></button>
+                    <button class="book" role="tab" id="bk-4" aria-controls="bp-4" aria-selected="false" tabindex="-1" style="--c:#2F6B4F;--h:218px;--w:48px"><span class="t">Economics</span></button>
+                    <button class="book" role="tab" id="bk-5" aria-controls="bp-5" aria-selected="false" tabindex="-1" style="--c:#3D6630;--h:204px;--w:44px"><span class="t">Biology</span></button>
+                    <button class="book light" role="tab" id="bk-6" aria-controls="bp-6" aria-selected="false" tabindex="-1" style="--c:#E9E2CF;--h:226px;--w:50px"><svg class="clip" width="16" height="30" viewBox="0 0 16 30" fill="none" aria-hidden="true"><path d="M11.5 9v12a3.5 3.5 0 0 1-7 0V7a5 5 0 0 1 10 0v15" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/></svg><span class="t">Literature</span></button>
+                    <button class="book" role="tab" id="bk-7" aria-controls="bp-7" aria-selected="false" tabindex="-1" style="--c:#5B3F6B;--h:190px;--w:54px"><span class="t">Physics</span></button>
+                    <button class="book lean" role="tab" id="bk-8" aria-controls="bp-8" aria-selected="false" tabindex="-1" style="--c:#2E3236;--h:208px;--w:46px;--lean:8deg"><span class="t">Computing</span></button>
+                        <span class="bookend" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-1" role="tabpanel" aria-labelledby="bk-1" style="--c:#2F5D7C">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Chemistry</h3>
+                        <p class="len">2 × 45 min</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">1</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">mole calculations are fine until you’re tired. do them in the first block.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">2</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-2" role="tabpanel" aria-labelledby="bk-2" hidden style="--c:#8C3B2E">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>History</h3>
+                        <p class="len">90 min straight</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">3</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">past papers after 9pm never happen. do them first.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">4</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-3" role="tabpanel" aria-labelledby="bk-3" hidden style="--c:#E4B53A">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Maths</h3>
+                        <p class="len">25-min sets</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">5</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">25 minutes is short enough that starting isn’t a decision.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">6</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-4" role="tabpanel" aria-labelledby="bk-4" hidden style="--c:#2F6B4F">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Economics</h3>
+                        <p class="len">45 + 45</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">7</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">the essay plan takes ten minutes and saves the whole second block.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">8</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-5" role="tabpanel" aria-labelledby="bk-5" hidden style="--c:#3D6630">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Biology</h3>
+                        <p class="len">60 min</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">9</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">re-reading the notes feels like studying. close them and say it out loud.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">10</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-6" role="tabpanel" aria-labelledby="bk-6" hidden style="--c:#E9E2CF">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Literature</h3>
+                        <p class="len">90 min</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">11</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">quotes don’t stick in twenty-minute bites. give it the full ninety.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">12</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-7" role="tabpanel" aria-labelledby="bk-7" hidden style="--c:#5B3F6B">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Physics</h3>
+                        <p class="len">45 × 2</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">13</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">if a question takes more than fifteen minutes, flag it and move on.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">14</span>
+                    </div>
+                </div>
+                <div class="open-book" id="bp-8" role="tabpanel" aria-labelledby="bk-8" hidden style="--c:#2E3236">
+                    <div class="pg l">
+                        <p class="kick">a suggestion, not a rule</p>
+                        <h3>Computing</h3>
+                        <p class="len">60 min</p>
+                        <dl>
+                            <dt>Block</dt>
+                            <dd>Discord, YouTube, TikTok, Steam, games</dd>
+                            <dt>Keep</dt>
+                            <dd>the browser — notes and flashcards</dd>
+                        </dl>
+                        <span class="pnum">15</span>
+                    </div>
+                    <div class="pg r">
+                        <p class="hand">the bug you can’t find at midnight is usually a typo. sleep, then look.</p>
+                        <a class="go" href="#download">Set this up →</a>
+                        <span class="pnum">16</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── p. 07 ───────────────────────────────────────────────────────── -->
+        <section id="fit">
+            <div class="wrap reveal">
+                <p class="page-label">p. 07</p>
                 <h2>What it isn't</h2>
                 <div class="fit">
                     <div class="note note-m">
@@ -641,10 +964,10 @@
             </div>
         </section>
 
-        <!-- ── p. 07 ───────────────────────────────────────────────────────── -->
+        <!-- ── p. 08 ───────────────────────────────────────────────────────── -->
         <section id="install">
             <div class="wrap reveal">
-                <p class="page-label">p. 07</p>
+                <p class="page-label">p. 08</p>
                 <h2>The install, honestly</h2>
                 <p class="lede" style="margin-top:16px">Windows will say "Windows protected your PC". Click
                     <b>More info</b>, then <b>Run anyway</b>.</p>
@@ -664,10 +987,10 @@
             </div>
         </section>
 
-        <!-- ── p. 08 ───────────────────────────────────────────────────────── -->
+        <!-- ── p. 09 ───────────────────────────────────────────────────────── -->
         <section id="who">
             <div class="wrap reveal">
-                <p class="page-label">p. 08</p>
+                <p class="page-label">p. 09</p>
                 <h2>Why this exists</h2>
                 <p class="lede" style="margin-top:16px">I built this because I'm someone who loses whole evenings to the
                     same four apps. I tried every blocker; I always found the pause button. This is the version without
@@ -678,7 +1001,7 @@
         <!-- ── FAQ ─────────────────────────────────────────────────────────── -->
         <section id="faq">
             <div class="wrap reveal">
-                <p class="page-label">p. 09</p>
+                <p class="page-label">p. 10</p>
                 <h2>Questions</h2>
                 <div class="faq">
                     <details>
@@ -814,6 +1137,47 @@
             } else {
                 cycle();
                 setInterval(cycle, 1700);
+            }
+
+            /* ── Bookshelf ─────────────────────────────────── */
+            var books = Array.prototype.slice.call(document.querySelectorAll('.book'));
+            if (books.length) {
+                var open = 0;
+                var openBook = function (i, moveFocus) {
+                    var prev = books[open];
+                    if (i !== open) {
+                        prev.setAttribute('aria-selected', 'false');
+                        prev.tabIndex = -1;
+                        document.getElementById(prev.getAttribute('aria-controls')).hidden = true;
+                    }
+                    var b = books[i];
+                    b.setAttribute('aria-selected', 'true');
+                    b.tabIndex = 0;
+                    open = i;
+                    var panel = document.getElementById(b.getAttribute('aria-controls'));
+                    panel.hidden = false;
+                    if (moveFocus) b.focus();
+                    /* The right page swings open on its gutter hinge. */
+                    var MM = window.Motion;
+                    if (!reduce && MM && MM.animate) {
+                        MM.animate(panel.querySelector('.pg.r'),
+                            { rotateY: [-72, 0], opacity: [0, 1] },
+                            { duration: 0.46, easing: [0.22, 0.61, 0.36, 1] });
+                        MM.animate(panel.querySelector('.pg.l'), { opacity: [0.35, 1] }, { duration: 0.32 });
+                    }
+                };
+                books.forEach(function (b, i) {
+                    /* A button fires click for Enter and Space already. */
+                    b.addEventListener('click', function () { openBook(i); });
+                    b.addEventListener('keydown', function (e) {
+                        var n = null;
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % books.length;
+                        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + books.length) % books.length;
+                        else if (e.key === 'Home') n = 0;
+                        else if (e.key === 'End') n = books.length - 1;
+                        if (n !== null) { e.preventDefault(); openBook(n, true); }
+                    });
+                });
             }
 
             /* ── Section reveal — page turn ───────────────────────────────── */
