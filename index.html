@@ -322,7 +322,9 @@
         .tl b { display: block; font-size: 1.05rem; font-variation-settings: "wdth" 108; }
         .tl span { font-size: 0.85rem; color: var(--ink-soft); }
         .tl-end { background: var(--mint); color: var(--mint-ink); }
-        .tl-end span { color: var(--mint-ink); opacity: 0.78; }
+        /* Solid, not faded: opacity blended this to 4.24:1 on the mint panel.
+           The weight difference carries the hierarchy instead. */
+        .tl-end span { color: var(--mint-ink); }
         @media (max-width: 700px) { .timeline { grid-template-columns: 1fr; } .tl { border-right: 0; border-bottom: 1.5px solid var(--rule); } .tl:last-child { border-bottom: 0; } }
 
         /* ── Looks strip ────────────────────────────────────────────────────── */
